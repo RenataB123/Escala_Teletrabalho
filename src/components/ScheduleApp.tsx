@@ -12,6 +12,11 @@ const ScheduleApp = () => {
   const [activeTab, setActiveTab] = useState('calendar');
   const [userRole, setUserRole] = useState('admin');
   
+  // Estados para salvamento/carregamento
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+  const [savedSchedules, setSavedSchedules] = useState({});
+  
   const [filters, setFilters] = useState({ employee: '', team: '', currentStatus: '' });
   const [showImportModal, setShowImportModal] = useState(false);
   const [importText, setImportText] = useState('');
@@ -111,6 +116,111 @@ const ScheduleApp = () => {
       setActiveTab('calendar');
     }
   }, [userRole, activeTab]);
+
+  // Funções para salvar/carregar escalas
+  const saveSchedule = async () => {
+    setIsSaving(true);
+    try {
+      // Simular salvamento (aqui você integraria com Supabase)
+      const scheduleData = {
+        employees,
+        schedules,
+        vacations,
+        holidays,
+        holidayStaff,
+        weekendShifts,
+        weekendStaff,
+        settings: {
+          maxCapacity,
+          targetOfficeCount,
+          targetOfficeMode
+        },
+        metadata: {
+          savedBy: userRole,
+          savedAt: new Date().toISOString(),
+          month: currentDate.getMonth(),
+          year: currentDate.getFullYear()
+        }
+      };
+      
+      const scheduleKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+      setSavedSchedules(prev => ({
+        ...prev,
+        [scheduleKey]: scheduleData
+      }));
+      
+      setLastSaved(new Date());
+      
+      const change = {
+        id: Date.now(),
+        timestamp: new Date(),
+        action: `💾 Escala salva para ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()}`
+      };
+      setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
+      
+      showAlert(
+        '✅ Escala Salva!',
+        `A escala de ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()} foi salva com sucesso!`,
+        'info'
+      );
+    } catch (error) {
+      showAlert(
+        '❌ Erro ao Salvar',
+        'Ocorreu um erro ao salvar a escala. Tente novamente.',
+        'danger'
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const loadSchedule = () => {
+    const scheduleKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+    const savedData = savedSchedules[scheduleKey];
+    
+    if (!savedData) {
+      showAlert(
+        'ℹ️ Nenhuma Escala Salva',
+        `Não há escala salva para ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()}`,
+        'info'
+      );
+      return;
+    }
+    
+    showConfirm(
+      '📂 Carregar Escala Salva',
+      `Carregar a escala salva de ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()]}?\n\n⚠️ Isso substituirá a escala atual!`,
+      () => {
+        setEmployees(savedData.employees || []);
+        setSchedules(savedData.schedules || {});
+        setVacations(savedData.vacations || {});
+        setHolidays(savedData.holidays || {});
+        setHolidayStaff(savedData.holidayStaff || {});
+        setWeekendShifts(savedData.weekendShifts || {});
+        setWeekendStaff(savedData.weekendStaff || {});
+        
+        if (savedData.settings) {
+          setMaxCapacity(savedData.settings.maxCapacity || 10);
+          setTargetOfficeCount(savedData.settings.targetOfficeCount || 6);
+          setTargetOfficeMode(savedData.settings.targetOfficeMode || 'absolute');
+        }
+        
+        const change = {
+          id: Date.now(),
+          timestamp: new Date(),
+          action: `📂 Escala carregada de ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()}`
+        };
+        setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
+        
+        showAlert(
+          '✅ Escala Carregada!',
+          `Escala de ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()} carregada com sucesso!`,
+          'info'
+        );
+      },
+      'warning'
+    );
+  };
 
   // Funções para modais de confirmação
   const showConfirm = (title, message, onConfirm, type = 'warning') => {
@@ -1048,7 +1158,7 @@ const ScheduleApp = () => {
     if (names.length === 1) {
       return names[0];
     } else if (names.length >= 2) {
-      return `${names[0]} ${names[names.length - 1]}`; // Primeiro + último nome
+      return `${names[0]} ${names[names.length - 1]}`;
     }
     return '';
   };
@@ -1096,8 +1206,8 @@ const ScheduleApp = () => {
       `}</style>
       
       <div className="max-w-7xl mx-auto">
-        {/* Header - versão simplificada sem duplicar com App.tsx */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-2 border-gray-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Calendar className="w-8 h-8 text-blue-600" />
@@ -1106,12 +1216,12 @@ const ScheduleApp = () => {
             
             <div className="flex items-center gap-4">
               {/* Seletor de Perfil */}
-              <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-                <div className="text-sm text-gray-600">👤</div>
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 border-2 border-gray-400">
+                <div className="text-sm text-gray-700 font-medium">👤</div>
                 <select
                   value={userRole}
                   onChange={(e) => setUserRole(e.target.value)}
-                  className="border-0 bg-transparent text-sm font-medium text-gray-700 focus:ring-0 focus:outline-none cursor-pointer"
+                  className="border-0 bg-transparent text-sm font-bold text-gray-800 focus:ring-0 focus:outline-none cursor-pointer"
                 >
                   <option value="admin">👑 Administrador</option>
                   <option value="manager">👨‍💼 Gestor</option>
@@ -1121,14 +1231,14 @@ const ScheduleApp = () => {
               
               <button
                 onClick={() => setShowHelp(true)}
-                className="flex items-center gap-2 p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                className="flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg border-2 border-gray-400 hover:border-gray-500"
                 title="Ajuda e Legendas"
               >
                 <HelpCircle className="w-4 h-4" />
               </button>
               <button
                 onClick={exportToExcel}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border-2 border-green-700 font-semibold"
               >
                 <Download className="w-4 h-4" />
                 Exportar
@@ -1137,10 +1247,14 @@ const ScheduleApp = () => {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 mt-4 border-b">
+          <div className="flex gap-4 mt-4 border-b-2 border-gray-300">
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`pb-2 px-1 ${activeTab === 'calendar' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              className={`pb-2 px-1 border-b-3 font-semibold transition-all ${
+                activeTab === 'calendar' 
+                  ? 'border-blue-600 text-blue-600 border-b-3' 
+                  : 'border-transparent text-gray-700 hover:text-gray-900'
+              }`}
             >
               <Calendar className="w-4 h-4 inline mr-2" />
               Calendário
@@ -1148,12 +1262,12 @@ const ScheduleApp = () => {
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('people')}
               disabled={userRole === 'employee'}
-              className={`pb-2 px-1 transition-all ${
+              className={`pb-2 px-1 border-b-3 font-semibold transition-all ${
                 userRole === 'employee' 
-                  ? 'text-gray-300 cursor-not-allowed' 
+                  ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'people' 
-                    ? 'border-b-2 border-blue-600 text-blue-600' 
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'border-blue-600 text-blue-600 border-b-3' 
+                    : 'border-transparent text-gray-700 hover:text-gray-900'
               }`}
             >
               <Users className="w-4 h-4 inline mr-2" />
@@ -1162,12 +1276,12 @@ const ScheduleApp = () => {
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('templates')}
               disabled={userRole === 'employee'}
-              className={`pb-2 px-1 transition-all ${
+              className={`pb-2 px-1 border-b-3 font-semibold transition-all ${
                 userRole === 'employee' 
-                  ? 'text-gray-300 cursor-not-allowed' 
+                  ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'templates' 
-                    ? 'border-b-2 border-blue-600 text-blue-600' 
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'border-blue-600 text-blue-600 border-b-3' 
+                    : 'border-transparent text-gray-700 hover:text-gray-900'
               }`}
             >
               <FileText className="w-4 h-4 inline mr-2" />
@@ -1176,12 +1290,12 @@ const ScheduleApp = () => {
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('reports')}
               disabled={userRole === 'employee'}
-              className={`pb-2 px-1 transition-all ${
+              className={`pb-2 px-1 border-b-3 font-semibold transition-all ${
                 userRole === 'employee' 
-                  ? 'text-gray-300 cursor-not-allowed' 
+                  ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'reports' 
-                    ? 'border-b-2 border-blue-600 text-blue-600' 
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'border-blue-600 text-blue-600 border-b-3' 
+                    : 'border-transparent text-gray-700 hover:text-gray-900'
               }`}
             >
               <FileText className="w-4 h-4 inline mr-2" />
@@ -1190,12 +1304,12 @@ const ScheduleApp = () => {
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('settings')}
               disabled={userRole === 'employee'}
-              className={`pb-2 px-1 transition-all ${
+              className={`pb-2 px-1 border-b-3 font-semibold transition-all ${
                 userRole === 'employee' 
-                  ? 'text-gray-300 cursor-not-allowed' 
+                  ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'settings' 
-                    ? 'border-b-2 border-blue-600 text-blue-600' 
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'border-blue-600 text-blue-600 border-b-3' 
+                    : 'border-transparent text-gray-700 hover:text-gray-900'
               }`}
             >
               <Settings className="w-4 h-4 inline mr-2" />
@@ -1206,14 +1320,14 @@ const ScheduleApp = () => {
 
         {/* Aviso para Colaboradores */}
         {userRole === 'employee' && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center border-2 border-blue-400">
                 👤
               </div>
               <div>
-                <h3 className="font-medium text-blue-900">Modo Colaborador</h3>
-                <p className="text-sm text-blue-700">
+                <h3 className="font-bold text-blue-900">Modo Colaborador</h3>
+                <p className="text-sm text-blue-800 font-medium">
                   Você tem acesso apenas à visualização do calendário. Para gerenciar pessoas, templates e configurações, 
                   contate seu gestor ou administrador.
                 </p>
@@ -1222,18 +1336,18 @@ const ScheduleApp = () => {
           </div>
         )}
 
-{/* Calendar Tab */}
+        {/* Calendar Tab */}
         {activeTab === 'calendar' && (
           <div className="space-y-6">
-            {/* Filtros em cima */}
-            <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-300">
-              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900">
+            {/* Filtros em cima do calendário */}
+            <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
+              <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-900">
                 <Filter className="w-5 h-5" />
                 Filtros
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                  <label className="block text-sm font-bold text-gray-800 mb-2">
                     Colaborador
                   </label>
                   <input
@@ -1241,17 +1355,17 @@ const ScheduleApp = () => {
                     placeholder="Buscar por nome..."
                     value={filters.employee}
                     onChange={(e) => setFilters(prev => ({ ...prev, employee: e.target.value }))}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                  <label className="block text-sm font-bold text-gray-800 mb-2">
                     Equipe
                   </label>
                   <select
                     value={filters.team}
                     onChange={(e) => setFilters(prev => ({ ...prev, team: e.target.value }))}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                   >
                     <option value="">Todas as equipes</option>
                     {teams.map(team => (
@@ -1261,13 +1375,13 @@ const ScheduleApp = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                  <label className="block text-sm font-bold text-gray-800 mb-2">
                     Status Atual
                   </label>
                   <select
                     value={filters.currentStatus || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, currentStatus: e.target.value }))}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                   >
                     <option value="">Todos os status</option>
                     <option value="office">🟢 Presencial</option>
@@ -1279,7 +1393,7 @@ const ScheduleApp = () => {
                 <div className="flex items-end gap-3">
                   <button
                     onClick={loadSchedule}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium border-2 border-blue-700 shadow-sm"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold border-2 border-blue-700 shadow-sm"
                     disabled={userRole === 'employee'}
                   >
                     📂 Carregar
@@ -1287,12 +1401,12 @@ const ScheduleApp = () => {
                   <button
                     onClick={saveSchedule}
                     disabled={userRole === 'employee' || isSaving}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium border-2 border-green-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold border-2 border-green-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? '⏳ Salvando...' : '💾 Salvar Escala'}
                   </button>
                   {lastSaved && (
-                    <div className="text-xs text-green-700 bg-green-100 px-2 py-1 rounded border border-green-300">
+                    <div className="text-xs text-green-800 bg-green-100 px-2 py-1 rounded border-2 border-green-300 font-semibold">
                       ✅ Salvo: {lastSaved.toLocaleTimeString()}
                     </div>
                   )}
@@ -1301,213 +1415,104 @@ const ScheduleApp = () => {
             </div>
 
             {/* Main Calendar */}
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-lg shadow-sm p-6 max-h-[80vh] overflow-y-auto">
-                <div className="flex items-center justify-between mb-6">
-                  <button
-                    onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
-                    className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded"
-                  >
-                    ←
-                  </button>
-                  <h2 className="text-xl font-semibold">
-                    {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-                  </h2>
-                  <button
-                    onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
-                    className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded"
-                  >
-                    →
-                  </button>
-                </div>
+            <div className="bg-white rounded-lg shadow-sm p-6 max-h-[80vh] overflow-y-auto border-2 border-gray-300">
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
+                  className="px-3 py-1 text-gray-700 hover:bg-gray-100 rounded border-2 border-gray-400 font-bold"
+                >
+                  ←
+                </button>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                </h2>
+                <button
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
+                  className="px-3 py-1 text-gray-700 hover:bg-gray-100 rounded border-2 border-gray-400 font-bold"
+                >
+                  →
+                </button>
+              </div>
 
-                <div className="flex gap-6 mb-4 text-sm">
-                  <div className="flex gap-4">
-                    {Object.entries(statusLabels).map(([key, label]) => (
-                      <div key={key} className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded ${statusColors[key]}`}></div>
-                        <span>{label}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">
-                    <Edit className="w-4 h-4" />
-                    <span className="text-xs font-medium">💡 Clique nos nomes para alternar</span>
-                  </div>
-                  {filters.currentStatus && (
-                    <div className="flex items-center gap-2 text-orange-600 bg-orange-50 px-3 py-1 rounded-lg">
-                      <Filter className="w-4 h-4" />
-                      <span className="text-xs font-medium">
-                        🔍 Filtro ativo: {statusLabels[filters.currentStatus]}
-                      </span>
+              <div className="flex gap-6 mb-4 text-sm">
+                <div className="flex gap-4">
+                  {Object.entries(statusLabels).map(([key, label]) => (
+                    <div key={key} className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded border-2 border-gray-600 ${statusColors[key]}`}></div>
+                      <span className="font-semibold text-gray-800">{label}</span>
                     </div>
-                  )}
+                  ))}
                 </div>
-
-                {employees.length === 0 && (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">📅</div>
-                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Nenhuma pessoa para exibir</h3>
-                    <p className="text-gray-600">Vá para a aba "Pessoas" para adicionar funcionários ao sistema.</p>
+                <div className="flex items-center gap-2 text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border-2 border-indigo-300">
+                  <Edit className="w-4 h-4" />
+                  <span className="text-xs font-bold">💡 Clique nos nomes para alternar</span>
+                </div>
+                {filters.currentStatus && (
+                  <div className="flex items-center gap-2 text-orange-700 bg-orange-50 px-3 py-1 rounded-lg border-2 border-orange-300">
+                    <Filter className="w-4 h-4" />
+                    <span className="text-xs font-bold">
+                      🔍 Filtro ativo: {statusLabels[filters.currentStatus]}
+                    </span>
                   </div>
                 )}
+              </div>
 
-                {employees.length > 0 && (
-                  <div className="grid grid-cols-7 gap-1">
-                    {weekDays.map(day => (
-                      <div key={day} className="p-2 text-center font-medium text-gray-700 bg-gray-100">
-                        {day}
-                      </div>
-                    ))}
+              {employees.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📅</div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Nenhuma pessoa para exibir</h3>
+                  <p className="text-gray-700 font-medium">Vá para a aba "Pessoas" para adicionar funcionários ao sistema.</p>
+                </div>
+              )}
+
+              {employees.length > 0 && (
+                <div className="grid grid-cols-7 gap-1">
+                  {weekDays.map(day => (
+                    <div key={day} className="p-3 text-center font-bold text-gray-800 bg-gray-200 border-2 border-gray-400">
+                      {day}
+                    </div>
+                  ))}
+                  
+                  {days.map((day, index) => {
+                    if (!day) {
+                      return <div key={index} className="p-2 min-h-[220px]"></div>;
+                    }
                     
-                    {days.map((day, index) => {
-                      if (!day) {
-                        return <div key={index} className="p-2 min-h-[200px]"></div>;
-                      }
-                      
-                      const dayOfWeek = day.getDay();
-                      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-                      const officeCount = getOfficeCount(day);
-                      const isOverCapacity = officeCount > maxCapacity;
-                      
-                      if (isWeekend) {
-                        return (
-                          <div key={index} className="border border-gray-200 min-h-[200px] bg-gray-50">
-                            <div className="p-1 text-center text-sm font-medium text-gray-400">
-                              {day.getDate()}
-                            </div>
-                            
-                            {weekendShifts[dateToString(day)] ? (
-                              <div className="p-4">
-                                <div className="text-center text-gray-500 text-sm mb-3">Plantão</div>
-                                <div className="text-xs font-medium text-gray-600 mb-2">⚫ Plantão</div>
-                                <div className="space-y-1 min-h-[60px] bg-gray-50 p-2 rounded">
-                                  {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
-                                    const isOnDuty = weekendStaff[dateToString(day)]?.includes(emp.id);
-                                    if (!isOnDuty) return null;
-                                    
-                                    return (
-                                      <div
-                                        key={emp.id}
-                                        className={`text-xs p-2 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 ${
-                                          emp.isManager 
-                                            ? 'bg-gray-100 text-gray-900 border-2 border-gray-600 font-semibold' 
-                                            : 'bg-gray-50 text-gray-800 border-2 border-gray-400 font-medium'
-                                        }`}
-                                        onClick={() => toggleWeekendStaff(day, emp.id)}
-                                        title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
-                                      >
-                                        <div className="font-medium">
-                                          {getDisplayName(emp.name)}
-                                          <span className="ml-1 opacity-60">✕</span>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                                
-                                {userRole !== 'employee' && (
-                                  <div className="mt-3 space-y-2">
-                                    <select 
-                                      className="w-full text-xs p-2 border rounded"
-                                      onChange={(e) => {
-                                        if (e.target.value) {
-                                          toggleWeekendStaff(day, parseInt(e.target.value));
-                                          e.target.value = '';
-                                        }
-                                      }}
-                                    >
-                                      <option value="">+ Adicionar ao plantão</option>
-                                      {getSortedEmployees(getFilteredEmployeesForDay(day))
-                                        .filter(emp => !weekendStaff[dateToString(day)]?.includes(emp.id))
-                                        .map(emp => (
-                                          <option key={emp.id} value={emp.id}>
-                                            {getDisplayName(emp.name)} {emp.isManager ? '(Gestor)' : ''}
-                                          </option>
-                                        ))
-                                      }
-                                    </select>
-                                    <button
-                                      onClick={() => toggleWeekendShift(day)}
-                                      className="w-full text-xs p-2 bg-red-100 text-red-700 rounded hover:bg-red-200"
-                                    >
-                                      📅 Remover Plantão
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="p-4 text-center">
-                                <div className="text-gray-400 text-xs mb-3">
-                                  Final de semana
-                                </div>
-                                {userRole !== 'employee' && (
-                                  <button
-                                    onClick={() => toggleWeekendShift(day)}
-                                    className="text-xs p-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                                  >
-                                    📅 Ativar Plantão
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      }
-                      
+                    const dayOfWeek = day.getDay();
+                    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+                    const officeCount = getOfficeCount(day);
+                    const isOverCapacity = officeCount > maxCapacity;
+                    
+                    if (isWeekend) {
                       return (
-                        <div key={index} className="border border-gray-200 min-h-[200px]">
-                          <div className={`p-1 text-center text-sm font-medium relative ${
-                            holidays[dateToString(day)] 
-                              ? 'bg-gray-400 text-white' 
-                              : isOverCapacity 
-                                ? 'bg-red-100 text-red-800' 
-                                : 'bg-gray-50'
-                          }`}>
-                            <div className="flex items-center justify-center gap-1">
-                              {day.getDate()}
-                              {userRole !== 'employee' && (
-                                <button
-                                  onClick={() => toggleHoliday(day)}
-                                  className={`p-1 rounded hover:bg-opacity-70 ${
-                                    holidays[dateToString(day)]
-                                      ? 'text-white hover:bg-gray-600'
-                                      : 'text-gray-500 hover:bg-gray-200'
-                                  }`}
-                                  title={holidays[dateToString(day)] ? 'Remover feriado' : 'Marcar como feriado'}
-                                >
-                                  <Calendar className="w-3 h-3" />
-                                </button>
-                              )}
-                              {isOverCapacity && !holidays[dateToString(day)] && (
-                                <AlertTriangle className="w-3 h-3 text-red-600" />
-                              )}
-                            </div>
+                        <div key={index} className="border-2 border-gray-400 min-h-[220px] bg-gray-100">
+                          <div className="p-1 text-center text-sm font-bold text-gray-600">
+                            {day.getDate()}
                           </div>
                           
-                          {holidays[dateToString(day)] ? (
+                          {weekendShifts[dateToString(day)] ? (
                             <div className="p-4">
-                              <div className="text-center text-gray-500 text-sm mb-3">Feriado</div>
-                              <div className="text-xs font-medium text-gray-600 mb-2">⚫ Plantão</div>
-                              <div className="space-y-1 min-h-[60px] bg-gray-50 p-2 rounded">
+                              <div className="text-center text-gray-600 text-sm mb-3 font-semibold">Plantão</div>
+                              <div className="text-xs font-bold text-gray-800 mb-2">⚫ Plantão</div>
+                              <div className="space-y-1 min-h-[60px] bg-gray-100 p-2 rounded border-2 border-gray-400">
                                 {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
-                                  const isOnDuty = holidayStaff[dateToString(day)]?.includes(emp.id);
+                                  const isOnDuty = weekendStaff[dateToString(day)]?.includes(emp.id);
                                   if (!isOnDuty) return null;
                                   
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-xs p-2 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 ${
+                                      className={`text-xs p-2 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 border-2 ${
                                         emp.isManager 
-                                          ? 'bg-gray-200 text-gray-900 border-2 border-blue-500 font-semibold shadow-sm' 
-                                          : 'bg-gray-100 text-gray-800 border-2 border-blue-400 font-medium shadow-sm'
+                                          ? 'bg-gray-200 text-gray-900 border-gray-700 font-bold' 
+                                          : 'bg-gray-100 text-gray-800 border-gray-500 font-semibold'
                                       }`}
-                                      onClick={() => toggleHolidayStaff(day, emp.id)}
+                                      onClick={() => toggleWeekendStaff(day, emp.id)}
                                       title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
                                     >
-                                      <div className="font-medium">
+                                      <div className="font-bold">
                                         {getDisplayName(emp.name)}
-                                        <span className="ml-1 opacity-60">✕</span>
+                                        <span className="ml-1 opacity-70">✕</span>
                                       </div>
                                     </div>
                                   );
@@ -1515,19 +1520,19 @@ const ScheduleApp = () => {
                               </div>
                               
                               {userRole !== 'employee' && (
-                                <div className="mt-3">
+                                <div className="mt-3 space-y-2">
                                   <select 
-                                    className="w-full text-xs p-2 border rounded"
+                                    className="w-full text-xs p-2 border-2 border-gray-400 rounded font-medium"
                                     onChange={(e) => {
                                       if (e.target.value) {
-                                        toggleHolidayStaff(day, parseInt(e.target.value));
+                                        toggleWeekendStaff(day, parseInt(e.target.value));
                                         e.target.value = '';
                                       }
                                     }}
                                   >
                                     <option value="">+ Adicionar ao plantão</option>
                                     {getSortedEmployees(getFilteredEmployeesForDay(day))
-                                      .filter(emp => !holidayStaff[dateToString(day)]?.includes(emp.id))
+                                      .filter(emp => !weekendStaff[dateToString(day)]?.includes(emp.id))
                                       .map(emp => (
                                         <option key={emp.id} value={emp.id}>
                                           {getDisplayName(emp.name)} {emp.isManager ? '(Gestor)' : ''}
@@ -1535,152 +1540,259 @@ const ScheduleApp = () => {
                                       ))
                                     }
                                   </select>
+                                  <button
+                                    onClick={() => toggleWeekendShift(day)}
+                                    className="w-full text-xs p-2 bg-red-100 text-red-800 rounded hover:bg-red-200 border-2 border-red-400 font-bold"
+                                  >
+                                    📅 Remover Plantão
+                                  </button>
                                 </div>
                               )}
                             </div>
                           ) : (
-                            <>
-                              <div className="p-2">
-                                <div className="text-xs font-medium text-gray-600 mb-2">🟢 Presencial</div>
-                                <div className="space-y-1 min-h-[60px] bg-green-50 p-2 rounded">
-                                  {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
-                                    const status = getEmployeeStatus(emp.id, day);
-                                    
-                                    if (status !== 'office') return null;
-                                    
-                                    let borderClass = '';
-                                    if (emp.type === 'always_office') {
-                                      borderClass = 'border-l-4 border-l-green-700';
-                                    } else if (emp.type === 'always_home') {
-                                      borderClass = 'border-l-4 border-l-blue-700';
-                                    }
-                                    
-                                    return (
-                                      <div
-                                        key={emp.id}
-                                        className={`text-xs p-2 rounded transition-all ${borderClass} ${
-                                          userRole !== 'employee' && emp.type === 'variable'
-                                            ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
-                                            : 'cursor-default'
-                                        } ${
-                                          emp.isManager 
-                                            ? 'bg-green-100 text-green-900 border-2 border-green-600 font-semibold' 
-                                            : 'bg-green-50 text-green-800 border-2 border-green-400 font-medium'
-                                        }`}
-                                        onClick={() => {
-                                          if (userRole !== 'employee' && emp.type === 'variable') {
-                                            setEmployeeStatus(emp.id, day, 'home');
-                                          }
-                                        }}
-                                        title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} ${
-                                          emp.type === 'variable' ? '- Clique para alternar' : ''
-                                        }`}
-                                      >
-                                        <div className="font-medium">
-                                          {getDisplayName(emp.name)}
-                                          {userRole !== 'employee' && emp.type === 'variable' && (
-                                            <span className="ml-1 opacity-60">⇄</span>
-                                          )}
-                                        </div>
-                                        <div className="text-xs opacity-75 mt-1">
-                                          [{emp.workingHours || '9-17'}]
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
+                            <div className="p-4 text-center">
+                              <div className="text-gray-500 text-xs mb-3 font-medium">
+                                Final de semana
                               </div>
-                              
-                              <div className="p-2">
-                                <div className="text-xs font-medium text-gray-600 mb-2">🔵 Home Office</div>
-                                <div className="space-y-1 min-h-[60px] bg-blue-50 p-2 rounded">
-                                  {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
-                                    const status = getEmployeeStatus(emp.id, day);
-                                    
-                                    if (status !== 'home') return null;
-                                    
-                                    let borderClass = '';
-                                    if (emp.type === 'always_office') {
-                                      borderClass = 'border-l-4 border-l-green-700';
-                                    } else if (emp.type === 'always_home') {
-                                      borderClass = 'border-l-4 border-l-blue-700';
-                                    }
-                                    
-                                    return (
-                                      <div
-                                        key={emp.id}
-                                        className={`text-xs p-2 rounded transition-all ${borderClass} ${
-                                          userRole !== 'employee' && emp.type === 'variable'
-                                            ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
-                                            : 'cursor-default'
-                                        } ${
-                                          emp.isManager 
-                                            ? 'bg-blue-100 text-blue-900 border-2 border-blue-600 font-semibold' 
-                                            : 'bg-blue-50 text-blue-800 border-2 border-blue-400 font-medium'
-                                        }`}
-                                        onClick={() => {
-                                          if (userRole !== 'employee' && emp.type === 'variable') {
-                                            setEmployeeStatus(emp.id, day, 'office');
-                                          }
-                                        }}
-                                        title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} ${
-                                          emp.type === 'variable' ? '- Clique para alternar' : ''
-                                        }`}
-                                      >
-                                        <div className="font-medium">
-                                          {getDisplayName(emp.name)}
-                                          {userRole !== 'employee' && emp.type === 'variable' && (
-                                            <span className="ml-1 opacity-60">⇄</span>
-                                          )}
-                                        </div>
-                                        <div className="text-xs opacity-75 mt-1">
-                                          [{emp.workingHours || '9-17'}]
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-
-                              {/* Seção de Férias */}
-                              <div className="p-2">
-                                <div className="text-xs font-medium text-gray-600 mb-2">🟠 Férias</div>
-                                <div className="space-y-1 min-h-[40px] bg-orange-50 p-2 rounded">
-                                  {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
-                                    const status = getEmployeeStatus(emp.id, day);
-                                    
-                                    if (status !== 'vacation') return null;
-                                    
-                                    return (
-                                      <div
-                                        key={emp.id}
-                                        className={`text-xs p-2 rounded transition-all cursor-default ${
-                                          emp.isManager 
-                                            ? 'bg-orange-100 text-orange-900 border-2 border-orange-600 font-semibold' 
-                                            : 'bg-orange-50 text-orange-800 border-2 border-orange-400 font-medium'
-                                        }`}
-                                        title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - De férias`}
-                                      >
-                                        <div className="font-medium">
-                                          {getDisplayName(emp.name)}
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                              
-                              <div className="p-1 text-xs text-center text-gray-600 border-t">
-                                {officeCount}/{maxCapacity} no escritório
-                              </div>
-                            </>
+                              {userRole !== 'employee' && (
+                                <button
+                                  onClick={() => toggleWeekendShift(day)}
+                                  className="text-xs p-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 border-2 border-blue-400 font-semibold"
+                                >
+                                  📅 Ativar Plantão
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
                       );
-                    })}
-                  </div>
-                )}
-              </div>
+                    }
+                    
+                    return (
+                      <div key={index} className="border-2 border-gray-400 min-h-[220px]">
+                        <div className={`p-1 text-center text-sm font-bold relative border-b-2 ${
+                          holidays[dateToString(day)] 
+                            ? 'bg-gray-500 text-white border-gray-600' 
+                            : isOverCapacity 
+                              ? 'bg-red-200 text-red-900 border-red-500' 
+                              : 'bg-gray-100 text-gray-800 border-gray-300'
+                        }`}>
+                          <div className="flex items-center justify-center gap-1">
+                            {day.getDate()}
+                            {userRole !== 'employee' && (
+                              <button
+                                onClick={() => toggleHoliday(day)}
+                                className={`p-1 rounded hover:bg-opacity-70 border ${
+                                  holidays[dateToString(day)]
+                                    ? 'text-white hover:bg-gray-700 border-gray-300'
+                                    : 'text-gray-600 hover:bg-gray-200 border-gray-400'
+                                }`}
+                                title={holidays[dateToString(day)] ? 'Remover feriado' : 'Marcar como feriado'}
+                              >
+                                <Calendar className="w-3 h-3" />
+                              </button>
+                            )}
+                            {isOverCapacity && !holidays[dateToString(day)] && (
+                              <AlertTriangle className="w-3 h-3 text-red-700" />
+                            )}
+                          </div>
+                        </div>
+                        
+                        {holidays[dateToString(day)] ? (
+                          <div className="p-4">
+                            <div className="text-center text-gray-600 text-sm mb-3 font-semibold">Feriado</div>
+                            <div className="text-xs font-bold text-gray-800 mb-2">⚫ Plantão</div>
+                            <div className="space-y-1 min-h-[60px] bg-gray-100 p-2 rounded border-2 border-gray-400">
+                              {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
+                                const isOnDuty = holidayStaff[dateToString(day)]?.includes(emp.id);
+                                if (!isOnDuty) return null;
+                                
+                                return (
+                                  <div
+                                    key={emp.id}
+                                    className={`text-xs p-2 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 border-2 ${
+                                      emp.isManager 
+                                        ? 'bg-gray-300 text-gray-900 border-blue-600 font-bold shadow-sm' 
+                                        : 'bg-gray-200 text-gray-800 border-blue-500 font-semibold shadow-sm'
+                                    }`}
+                                    onClick={() => toggleHolidayStaff(day, emp.id)}
+                                    title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
+                                  >
+                                    <div className="font-bold">
+                                      {getDisplayName(emp.name)}
+                                      <span className="ml-1 opacity-70">✕</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            
+                            {userRole !== 'employee' && (
+                              <div className="mt-3">
+                                <select 
+                                  className="w-full text-xs p-2 border-2 border-gray-400 rounded font-medium"
+                                  onChange={(e) => {
+                                    if (e.target.value) {
+                                      toggleHolidayStaff(day, parseInt(e.target.value));
+                                      e.target.value = '';
+                                    }
+                                  }}
+                                >
+                                  <option value="">+ Adicionar ao plantão</option>
+                                  {getSortedEmployees(getFilteredEmployeesForDay(day))
+                                    .filter(emp => !holidayStaff[dateToString(day)]?.includes(emp.id))
+                                    .map(emp => (
+                                      <option key={emp.id} value={emp.id}>
+                                        {getDisplayName(emp.name)} {emp.isManager ? '(Gestor)' : ''}
+                                      </option>
+                                    ))
+                                  }
+                                </select>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <>
+                            <div className="p-2">
+                              <div className="text-xs font-bold text-gray-800 mb-2">🟢 Presencial</div>
+                              <div className="space-y-1 min-h-[60px] bg-green-50 p-2 rounded border-2 border-green-300">
+                                {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
+                                  const status = getEmployeeStatus(emp.id, day);
+                                  
+                                  if (status !== 'office') return null;
+                                  
+                                  let borderClass = '';
+                                  if (emp.type === 'always_office') {
+                                    borderClass = 'border-l-4 border-l-green-800';
+                                  } else if (emp.type === 'always_home') {
+                                    borderClass = 'border-l-4 border-l-blue-800';
+                                  }
+                                  
+                                  return (
+                                    <div
+                                      key={emp.id}
+                                      className={`text-xs p-2 rounded transition-all border-2 ${borderClass} ${
+                                        userRole !== 'employee' && emp.type === 'variable'
+                                          ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
+                                          : 'cursor-default'
+                                      } ${
+                                        emp.isManager 
+                                          ? 'bg-green-200 text-green-900 border-green-700 font-bold' 
+                                          : 'bg-green-100 text-green-800 border-green-500 font-semibold'
+                                      }`}
+                                      onClick={() => {
+                                        if (userRole !== 'employee' && emp.type === 'variable') {
+                                          setEmployeeStatus(emp.id, day, 'home');
+                                        }
+                                      }}
+                                      title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} ${
+                                        emp.type === 'variable' ? '- Clique para alternar' : ''
+                                      }`}
+                                    >
+                                      <div className="font-bold">
+                                        {getDisplayName(emp.name)}
+                                        {userRole !== 'employee' && emp.type === 'variable' && (
+                                          <span className="ml-1 opacity-70">⇄</span>
+                                        )}
+                                      </div>
+                                      <div className="text-xs opacity-80 mt-1 font-medium">
+                                        [{emp.workingHours || '9-17'}]
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                            
+                            <div className="p-2">
+                              <div className="text-xs font-bold text-gray-800 mb-2">🔵 Home Office</div>
+                              <div className="space-y-1 min-h-[60px] bg-blue-50 p-2 rounded border-2 border-blue-300">
+                                {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
+                                  const status = getEmployeeStatus(emp.id, day);
+                                  
+                                  if (status !== 'home') return null;
+                                  
+                                  let borderClass = '';
+                                  if (emp.type === 'always_office') {
+                                    borderClass = 'border-l-4 border-l-green-800';
+                                  } else if (emp.type === 'always_home') {
+                                    borderClass = 'border-l-4 border-l-blue-800';
+                                  }
+                                  
+                                  return (
+                                    <div
+                                      key={emp.id}
+                                      className={`text-xs p-2 rounded transition-all border-2 ${borderClass} ${
+                                        userRole !== 'employee' && emp.type === 'variable'
+                                          ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
+                                          : 'cursor-default'
+                                      } ${
+                                        emp.isManager 
+                                          ? 'bg-blue-200 text-blue-900 border-blue-700 font-bold' 
+                                          : 'bg-blue-100 text-blue-800 border-blue-500 font-semibold'
+                                      }`}
+                                      onClick={() => {
+                                        if (userRole !== 'employee' && emp.type === 'variable') {
+                                          setEmployeeStatus(emp.id, day, 'office');
+                                        }
+                                      }}
+                                      title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} ${
+                                        emp.type === 'variable' ? '- Clique para alternar' : ''
+                                      }`}
+                                    >
+                                      <div className="font-bold">
+                                        {getDisplayName(emp.name)}
+                                        {userRole !== 'employee' && emp.type === 'variable' && (
+                                          <span className="ml-1 opacity-70">⇄</span>
+                                        )}
+                                      </div>
+                                      <div className="text-xs opacity-80 mt-1 font-medium">
+                                        [{emp.workingHours || '9-17'}]
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Seção de Férias */}
+                            <div className="p-2">
+                              <div className="text-xs font-bold text-gray-800 mb-2">🟠 Férias</div>
+                              <div className="space-y-1 min-h-[40px] bg-orange-50 p-2 rounded border-2 border-orange-300">
+                                {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
+                                  const status = getEmployeeStatus(emp.id, day);
+                                  
+                                  if (status !== 'vacation') return null;
+                                  
+                                  return (
+                                    <div
+                                      key={emp.id}
+                                      className={`text-xs p-2 rounded transition-all cursor-default border-2 ${
+                                        emp.isManager 
+                                          ? 'bg-orange-200 text-orange-900 border-orange-700 font-bold' 
+                                          : 'bg-orange-100 text-orange-800 border-orange-500 font-semibold'
+                                      }`}
+                                      title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - De férias`}
+                                    >
+                                      <div className="font-bold">
+                                        {getDisplayName(emp.name)}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                            
+                            <div className="p-1 text-xs text-center text-gray-800 border-t-2 border-gray-300 font-bold">
+                              {officeCount}/{maxCapacity} no escritório
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1688,24 +1800,24 @@ const ScheduleApp = () => {
         {/* People Tab */}
         {activeTab === 'people' && userRole !== 'employee' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Gerenciar Pessoas</h3>
+                <h3 className="font-bold text-gray-900">Gerenciar Pessoas</h3>
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-4 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-4 bg-blue-50 p-3 rounded-lg border-2 border-blue-300">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-700 font-medium">Meta presencial:</span>
+                      <span className="text-sm text-gray-800 font-bold">Meta presencial:</span>
                       <input
                         type="number"
                         value={targetOfficeCount}
                         onChange={(e) => setTargetOfficeCount(Number(e.target.value))}
-                        className="w-16 px-2 py-1 border rounded text-center font-medium"
+                        className="w-16 px-2 py-1 border-2 border-gray-400 rounded text-center font-bold"
                         min="0"
                       />
-                      <span className="text-sm text-gray-700">pessoas</span>
+                      <span className="text-sm text-gray-800 font-medium">pessoas</span>
                     </div>
                     
-                    <div className="flex items-center gap-3 border-l border-blue-300 pl-3">
+                    <div className="flex items-center gap-3 border-l-2 border-blue-400 pl-3">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
@@ -1715,7 +1827,7 @@ const ScheduleApp = () => {
                           onChange={(e) => setTargetOfficeMode(e.target.value)}
                           className="text-blue-600"
                         />
-                        <span className="text-sm font-medium text-blue-900">🎯 Absoluta</span>
+                        <span className="text-sm font-bold text-blue-900">🎯 Absoluta</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -1726,12 +1838,12 @@ const ScheduleApp = () => {
                           onChange={(e) => setTargetOfficeMode(e.target.value)}
                           className="text-blue-600"
                         />
-                        <span className="text-sm font-medium text-blue-900">📊 Mínima</span>
+                        <span className="text-sm font-bold text-blue-900">📊 Mínima</span>
                       </label>
                     </div>
                   </div>
                   
-                  <div className="text-xs text-blue-700 max-w-xs">
+                  <div className="text-xs text-blue-800 max-w-xs font-semibold">
                     {targetOfficeMode === 'absolute' 
                       ? `🎯 Exatamente ${targetOfficeCount} pessoas presenciais (ajusta automaticamente)`
                       : `📊 Pelo menos ${targetOfficeCount} pessoas presenciais (permite mais)`
@@ -1739,14 +1851,14 @@ const ScheduleApp = () => {
                   </div>
                   <button
                     onClick={() => setShowImportModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border-2 border-green-700 font-semibold"
                   >
                     <FileText className="w-4 h-4" />
                     Importar Lista
                   </button>
                   <button
                     onClick={() => setShowAddEmployee(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-2 border-blue-700 font-semibold"
                   >
                     <Plus className="w-4 h-4" />
                     Adicionar Nova Pessoa
@@ -1757,7 +1869,7 @@ const ScheduleApp = () => {
               {/* Filters */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-800 mb-1">
                     Buscar por nome
                   </label>
                   <input
@@ -1765,17 +1877,17 @@ const ScheduleApp = () => {
                     placeholder="Buscar..."
                     value={personFilters.name}
                     onChange={(e) => setPersonFilters(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg text-sm font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-800 mb-1">
                     Tipo
                   </label>
                   <select
                     value={personFilters.type}
                     onChange={(e) => setPersonFilters(prev => ({ ...prev, type: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg text-sm font-medium"
                   >
                     <option value="">Todos</option>
                     <option value="manager">Gestores</option>
@@ -1785,25 +1897,25 @@ const ScheduleApp = () => {
               </div>
 
               {/* People Grid */}
-              <div className="border rounded-lg p-4" style={{ maxHeight: '70vh', minHeight: '60vh' }}>
+              <div className="border-2 border-gray-400 rounded-lg p-4" style={{ maxHeight: '70vh', minHeight: '60vh' }}>
                 {employees.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <div className="text-6xl mb-4">👥</div>
-                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Nenhuma pessoa cadastrada</h3>
-                    <p className="text-gray-600 mb-6 max-w-md">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Nenhuma pessoa cadastrada</h3>
+                    <p className="text-gray-700 mb-6 max-w-md font-medium">
                       Comece adicionando pessoas individualmente ou importe uma lista completa de uma só vez.
                     </p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => setShowImportModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border-2 border-green-700 font-semibold"
                       >
                         <FileText className="w-4 h-4" />
                         Importar Lista
                       </button>
                       <button
                         onClick={() => setShowAddEmployee(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-2 border-blue-700 font-semibold"
                       >
                         <Plus className="w-4 h-4" />
                         Adicionar Pessoa
@@ -1828,10 +1940,10 @@ const ScheduleApp = () => {
                       return (
                         <div
                           key={person.id}
-                          className={`transition-all duration-300 rounded-lg ${
+                          className={`transition-all duration-300 rounded-lg border-2 ${
                             isExpanded 
-                              ? 'border-2 border-blue-500 bg-blue-50 shadow-lg' 
-                              : 'border border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                              ? 'border-blue-500 bg-blue-50 shadow-lg' 
+                              : 'border-gray-400 bg-white hover:border-gray-500 hover:bg-gray-50'
                           }`}
                         >
                           {/* Card Header */}
@@ -1840,16 +1952,16 @@ const ScheduleApp = () => {
                               <div className="flex items-center gap-2 flex-1">
                                 <span className="text-lg">{statusIcon[status] || '⚪'}</span>
                                 <div className="flex-1 min-w-0">
-                                  <div className="font-medium text-base truncate flex items-center gap-2">
+                                  <div className="font-bold text-base truncate flex items-center gap-2 text-gray-900">
                                     {person.name}
                                     {person.isManager && (
-                                      <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                                      <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded border border-purple-400 font-semibold">
                                         Gestor
                                       </span>
                                     )}
                                   </div>
                                   {person.team && (
-                                    <div className="text-sm text-gray-600 mt-1">{person.team}</div>
+                                    <div className="text-sm text-gray-700 mt-1 font-medium">{person.team}</div>
                                   )}
                                 </div>
                               </div>
@@ -1862,58 +1974,58 @@ const ScheduleApp = () => {
                                     setHasUnsavedChanges(false);
                                     setActivePersonTab('dados');
                                   }}
-                                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                  className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border-2 border-gray-400"
                                   title="Editar pessoa"
                                   disabled={userRole === 'employee'}
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
-                                  <button
-                                    onClick={() => {
-                                      showConfirm(
-                                        '❌ Excluir Pessoa',
-                                        `Tem certeza que deseja excluir ${person.name}?`,
-                                        () => {
-                                          setEmployees(prev => prev.filter(emp => emp.id !== person.id));
-                                          
-                                          if (expandedPersonId === person.id) {
-                                            setExpandedPersonId(null);
-                                            setEditingPerson(null);
-                                            setHasUnsavedChanges(false);
-                                          }
-                                          
-                                          setSchedules(prev => {
-                                            const newSchedules = { ...prev };
-                                            delete newSchedules[person.id];
-                                            return newSchedules;
-                                          });
-                                          
-                                          setVacations(prev => {
-                                            const newVacations = { ...prev };
-                                            delete newVacations[person.id];
-                                            return newVacations;
-                                          });
-                                          
-                                          if (selectedPerson && selectedPerson.id === person.id) {
-                                            setSelectedPerson(null);
-                                          }
-                                          
-                                          const change = {
-                                            id: Date.now(),
-                                            timestamp: new Date(),
-                                            action: `❌ Excluiu a pessoa ${person.name}`
-                                          };
-                                          setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
-                                        },
-                                        'danger'
-                                      );
-                                    }}
-                                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                                    title="Excluir pessoa"
-                                    disabled={userRole === 'employee'}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
+                                <button
+                                  onClick={() => {
+                                    showConfirm(
+                                      '❌ Excluir Pessoa',
+                                      `Tem certeza que deseja excluir ${person.name}?`,
+                                      () => {
+                                        setEmployees(prev => prev.filter(emp => emp.id !== person.id));
+                                        
+                                        if (expandedPersonId === person.id) {
+                                          setExpandedPersonId(null);
+                                          setEditingPerson(null);
+                                          setHasUnsavedChanges(false);
+                                        }
+                                        
+                                        setSchedules(prev => {
+                                          const newSchedules = { ...prev };
+                                          delete newSchedules[person.id];
+                                          return newSchedules;
+                                        });
+                                        
+                                        setVacations(prev => {
+                                          const newVacations = { ...prev };
+                                          delete newVacations[person.id];
+                                          return newVacations;
+                                        });
+                                        
+                                        if (selectedPerson && selectedPerson.id === person.id) {
+                                          setSelectedPerson(null);
+                                        }
+                                        
+                                        const change = {
+                                          id: Date.now(),
+                                          timestamp: new Date(),
+                                          action: `❌ Excluiu a pessoa ${person.name}`
+                                        };
+                                        setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
+                                      },
+                                      'danger'
+                                    );
+                                  }}
+                                  className="p-2 text-red-700 hover:bg-red-100 rounded-lg transition-colors border-2 border-red-400"
+                                  title="Excluir pessoa"
+                                  disabled={userRole === 'employee'}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
                               </div>
                             </div>
                             
@@ -1929,7 +2041,7 @@ const ScheduleApp = () => {
                                     setActivePersonTab('dados');
                                   }
                                 }}
-                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 border-2 border-blue-700 font-semibold"
                               >
                                 📋 {isExpanded ? 'Fechar Detalhes' : 'Ver Detalhes'}
                               </button>
@@ -1938,27 +2050,27 @@ const ScheduleApp = () => {
 
                           {/* Expanded Content */}
                           {isExpanded && (
-                            <div className="border-t border-blue-200 bg-white person-card-expanded">
+                            <div className="border-t-2 border-blue-300 bg-white person-card-expanded">
                               <div className="p-6">
                                 {/* Header da expansão com abas */}
                                 <div className="flex items-center justify-between mb-4">
                                   <div className="flex gap-4">
                                     <button
                                       onClick={() => setActivePersonTab('dados')}
-                                      className={`pb-2 px-1 border-b-2 transition-colors ${
+                                      className={`pb-2 px-1 border-b-2 transition-colors font-semibold ${
                                         activePersonTab === 'dados' 
                                           ? 'border-blue-600 text-blue-600' 
-                                          : 'border-transparent text-gray-600 hover:text-gray-800'
+                                          : 'border-transparent text-gray-700 hover:text-gray-900'
                                       }`}
                                     >
                                       📋 Dados Básicos
                                     </button>
                                     <button
                                       onClick={() => setActivePersonTab('escala')}
-                                      className={`pb-2 px-1 border-b-2 transition-colors ${
+                                      className={`pb-2 px-1 border-b-2 transition-colors font-semibold ${
                                         activePersonTab === 'escala' 
                                           ? 'border-blue-600 text-blue-600' 
-                                          : 'border-transparent text-gray-600 hover:text-gray-800'
+                                          : 'border-transparent text-gray-700 hover:text-gray-900'
                                       }`}
                                     >
                                       📅 Escala & Férias
@@ -1967,7 +2079,7 @@ const ScheduleApp = () => {
                                   
                                   {hasUnsavedChanges && editingPerson && editingPerson.id === person.id && (
                                     <div className="flex items-center gap-3">
-                                      <span className="text-sm text-orange-600 font-medium">• Alterações não salvas</span>
+                                      <span className="text-sm text-orange-700 font-bold">• Alterações não salvas</span>
                                       <button
                                         onClick={() => {
                                           if (editingPerson) {
@@ -1982,7 +2094,7 @@ const ScheduleApp = () => {
                                             setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
                                           }
                                         }}
-                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 border-2 border-green-700 font-semibold"
                                       >
                                         💾 Salvar
                                       </button>
@@ -1998,7 +2110,7 @@ const ScheduleApp = () => {
                                       <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                           <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                                            <label className="block text-sm font-bold text-gray-800 mb-1">Nome</label>
                                             <input
                                               type="text"
                                               value={currentEditData.name}
@@ -2006,11 +2118,11 @@ const ScheduleApp = () => {
                                                 setEditingPerson(prev => ({ ...(prev || person), name: e.target.value }));
                                                 setHasUnsavedChanges(true);
                                               }}
-                                              className="w-full px-3 py-2 border rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                              className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                                             />
                                           </div>
                                           <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Equipe</label>
+                                            <label className="block text-sm font-bold text-gray-800 mb-1">Equipe</label>
                                             <input
                                               type="text"
                                               value={currentEditData.team || ''}
@@ -2018,20 +2130,20 @@ const ScheduleApp = () => {
                                                 setEditingPerson(prev => ({ ...(prev || person), team: e.target.value }));
                                                 setHasUnsavedChanges(true);
                                               }}
-                                              className="w-full px-3 py-2 border rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                              className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                                             />
                                           </div>
                                         </div>
                                         
                                         <div>
-                                          <label className="block text-sm font-medium text-gray-700 mb-1">Regime de Trabalho</label>
+                                          <label className="block text-sm font-bold text-gray-800 mb-1">Regime de Trabalho</label>
                                           <select
                                             value={currentEditData.type}
                                             onChange={(e) => {
                                               setEditingPerson(prev => ({ ...(prev || person), type: e.target.value }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="w-full px-3 py-2 border rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                            className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                                           >
                                             <option value="variable">Presença Variável</option>
                                             <option value="always_office">Sempre Presencial</option>
@@ -2040,20 +2152,20 @@ const ScheduleApp = () => {
                                         </div>
 
                                         <div>
-                                          <label className="block text-sm font-medium text-gray-700 mb-1">Horário de Trabalho</label>
+                                          <label className="block text-sm font-bold text-gray-800 mb-1">Horário de Trabalho</label>
                                           <select
                                             value={currentEditData.workingHours || '9-17'}
                                             onChange={(e) => {
                                               setEditingPerson(prev => ({ ...(prev || person), workingHours: e.target.value }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="w-full px-3 py-2 border rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                            className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                                           >
                                             {Object.entries(workingHours).map(([key, hours]) => (
                                               <option key={key} value={key}>{hours.label}</option>
                                             ))}
                                           </select>
-                                          <div className="text-xs text-gray-500 mt-1">
+                                          <div className="text-xs text-gray-600 mt-1 font-medium">
                                             Define as janelas horárias que você pode cobrir
                                           </div>
                                         </div>
@@ -2066,16 +2178,16 @@ const ScheduleApp = () => {
                                               setEditingPerson(prev => ({ ...(prev || person), isManager: e.target.checked }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            className="rounded border-gray-400 text-blue-600 focus:ring-blue-500"
                                           />
-                                          <span className="text-sm">Gestor</span>
+                                          <span className="text-sm font-semibold">Gestor</span>
                                         </label>
 
                                         {/* Configurações para Presença Variável */}
                                         {currentEditData.type === 'variable' && (
-                                          <div className="border-t pt-4 space-y-4">
+                                          <div className="border-t-2 border-gray-300 pt-4 space-y-4">
                                             <div>
-                                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                              <label className="block text-sm font-bold text-gray-800 mb-2">
                                                 Dias presenciais por semana (orientativo)
                                               </label>
                                               <select
@@ -2084,7 +2196,7 @@ const ScheduleApp = () => {
                                                   setEditingPerson(prev => ({ ...(prev || person), officeDays: Number(e.target.value) }));
                                                   setHasUnsavedChanges(true);
                                                 }}
-                                                className="w-full px-3 py-2 border rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-medium"
                                               >
                                                 <option value={1}>1 dia</option>
                                                 <option value={2}>2 dias</option>
@@ -2092,13 +2204,13 @@ const ScheduleApp = () => {
                                                 <option value={4}>4 dias</option>
                                                 <option value={5}>5 dias</option>
                                               </select>
-                                              <div className="text-xs text-gray-500 mt-1">
+                                              <div className="text-xs text-gray-600 mt-1 font-medium">
                                                 💡 Orientativo apenas
                                               </div>
                                             </div>
 
                                             <div>
-                                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                              <label className="block text-sm font-bold text-gray-800 mb-2">
                                                 Dias Preferenciais em Home Office
                                               </label>
                                               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -2126,13 +2238,13 @@ const ScheduleApp = () => {
                                                         }));
                                                         setHasUnsavedChanges(true);
                                                       }}
-                                                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                      className="rounded border-gray-400 text-blue-600 focus:ring-blue-500"
                                                     />
-                                                    <span className="text-sm">{day.label}</span>
+                                                    <span className="text-sm font-medium">{day.label}</span>
                                                   </label>
                                                 ))}
                                               </div>
-                                              <div className="text-xs text-gray-500 mt-2">
+                                              <div className="text-xs text-gray-600 mt-2 font-medium">
                                                 Preferências de dias para home office
                                               </div>
                                             </div>
@@ -2143,31 +2255,31 @@ const ScheduleApp = () => {
                                       /* Modo Visualização */
                                       <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="bg-gray-50 p-3 rounded-lg">
-                                            <div className="text-sm text-gray-600">Regime de Trabalho</div>
-                                            <div className="font-medium">{employeeTypes[person.type]}</div>
+                                          <div className="bg-gray-100 p-3 rounded-lg border-2 border-gray-300">
+                                            <div className="text-sm text-gray-700 font-medium">Regime de Trabalho</div>
+                                            <div className="font-bold text-gray-900">{employeeTypes[person.type]}</div>
                                           </div>
-                                          <div className="bg-gray-50 p-3 rounded-lg">
-                                            <div className="text-sm text-gray-600">Horário de Trabalho</div>
-                                            <div className="font-medium">{workingHours[person.workingHours || '9-17']?.label || 'Não definido'}</div>
+                                          <div className="bg-gray-100 p-3 rounded-lg border-2 border-gray-300">
+                                            <div className="text-sm text-gray-700 font-medium">Horário de Trabalho</div>
+                                            <div className="font-bold text-gray-900">{workingHours[person.workingHours || '9-17']?.label || 'Não definido'}</div>
                                           </div>
-                                          <div className="bg-gray-50 p-3 rounded-lg">
-                                            <div className="text-sm text-gray-600">Status Atual</div>
-                                            <div className="font-medium">{statusLabels[status] || 'Não definido'}</div>
+                                          <div className="bg-gray-100 p-3 rounded-lg border-2 border-gray-300">
+                                            <div className="text-sm text-gray-700 font-medium">Status Atual</div>
+                                            <div className="font-bold text-gray-900">{statusLabels[status] || 'Não definido'}</div>
                                           </div>
-                                          <div className="bg-gray-50 p-3 rounded-lg">
-                                            <div className="text-sm text-gray-600">Dias Presencial (Orientativo)</div>
-                                            <div className="font-medium">{person.officeDays || 0} dias/semana</div>
-                                            <div className="text-xs text-gray-500 mt-1">Orientativo</div>
+                                          <div className="bg-gray-100 p-3 rounded-lg border-2 border-gray-300">
+                                            <div className="text-sm text-gray-700 font-medium">Dias Presencial (Orientativo)</div>
+                                            <div className="font-bold text-gray-900">{person.officeDays || 0} dias/semana</div>
+                                            <div className="text-xs text-gray-600 mt-1 font-medium">Orientativo</div>
                                           </div>
                                         </div>
                                         
                                         {person.type === 'variable' && person.preferences && Object.keys(person.preferences).length > 0 && (
-                                          <div className="bg-blue-50 p-3 rounded-lg">
-                                            <div className="text-sm text-gray-600 mb-2">Preferências de Home Office</div>
+                                          <div className="bg-blue-50 p-3 rounded-lg border-2 border-blue-300">
+                                            <div className="text-sm text-gray-700 mb-2 font-medium">Preferências de Home Office</div>
                                             <div className="flex flex-wrap gap-2">
                                               {Object.keys(person.preferences).map(day => (
-                                                <span key={day} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                                <span key={day} className="text-xs bg-blue-200 text-blue-900 px-2 py-1 rounded border border-blue-400 font-semibold">
                                                   {day === 'monday' ? 'Segunda' : day === 'tuesday' ? 'Terça' : day === 'wednesday' ? 'Quarta' : day === 'thursday' ? 'Quinta' : 'Sexta'}
                                                 </span>
                                               ))}
@@ -2181,7 +2293,7 @@ const ScheduleApp = () => {
                                               setEditingPerson(person);
                                               setHasUnsavedChanges(false);
                                             }}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors border-2 border-blue-700 font-semibold"
                                             disabled={userRole === 'employee'}
                                           >
                                             ✏️ Editar Dados
@@ -2196,9 +2308,9 @@ const ScheduleApp = () => {
                                   <div className="space-y-6">
                                     {/* Seção de Férias */}
                                     {vacations[person.id] && (
-                                      <div className="bg-orange-50 p-4 rounded-lg">
-                                        <div className="text-sm text-gray-600 mb-1">🟠 Período de Férias Configurado</div>
-                                        <div className="font-medium">
+                                      <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-300">
+                                        <div className="text-sm text-gray-700 mb-1 font-medium">🟠 Período de Férias Configurado</div>
+                                        <div className="font-bold text-gray-900">
                                           {new Date(vacations[person.id].start).toLocaleDateString()} a {new Date(vacations[person.id].end).toLocaleDateString()}
                                         </div>
                                       </div>
@@ -2212,7 +2324,7 @@ const ScheduleApp = () => {
                                           setVacationPersonId(person.id);
                                           setShowVacationForm(true);
                                         }}
-                                        className="flex items-center gap-2 p-3 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50"
+                                        className="flex items-center gap-2 p-3 border-2 border-orange-400 text-orange-800 rounded-lg hover:bg-orange-50 font-semibold"
                                       >
                                         <Calendar className="w-4 h-4" />
                                         {vacations[person.id] ? 'Alterar Férias' : 'Definir Férias'}
@@ -2241,7 +2353,7 @@ const ScheduleApp = () => {
                                               'warning'
                                             );
                                           }}
-                                          className="flex items-center gap-2 p-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50"
+                                          className="flex items-center gap-2 p-3 border-2 border-red-400 text-red-800 rounded-lg hover:bg-red-50 font-semibold"
                                         >
                                           <Trash2 className="w-4 h-4" />
                                           Remover Férias
@@ -2290,7 +2402,7 @@ const ScheduleApp = () => {
                                             'warning'
                                           );
                                         }}
-                                        className="flex items-center gap-2 p-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                        className="flex items-center gap-2 p-3 border-2 border-gray-400 text-gray-800 rounded-lg hover:bg-gray-50 font-semibold"
                                       >
                                         <RotateCcw className="w-4 h-4" />
                                         Limpar TODAS Configurações
@@ -2298,9 +2410,9 @@ const ScheduleApp = () => {
                                     </div>
 
                                     {/* Informações Adicionais */}
-                                    <div className="bg-gray-50 p-4 rounded-lg">
-                                      <div className="text-sm text-gray-600 mb-2">📋 Informações da Escala</div>
-                                      <div className="text-sm text-gray-700">
+                                    <div className="bg-gray-100 p-4 rounded-lg border-2 border-gray-300">
+                                      <div className="text-sm text-gray-700 mb-2 font-medium">📋 Informações da Escala</div>
+                                      <div className="text-sm text-gray-800 font-medium">
                                         Para visualizar e editar a escala detalhada desta pessoa, 
                                         utilize o <strong>calendário principal</strong> na aba "Calendário".
                                         Lá você pode clicar nos nomes para alternar entre presencial e home office.
@@ -2324,21 +2436,21 @@ const ScheduleApp = () => {
         {/* Templates Tab */}
         {activeTab === 'templates' && userRole !== 'employee' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="font-semibold mb-4">Templates de Escala</h3>
+            <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
+              <h3 className="font-bold mb-4 text-gray-900">Templates de Escala</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium mb-3">Aplicar Template</h4>
-                  <div className="space-y-3 border rounded-lg p-4">
+                  <h4 className="font-bold mb-3 text-gray-800">Aplicar Template</h4>
+                  <div className="space-y-3 border-2 border-gray-400 rounded-lg p-4">
                     {Object.entries(templates).map(([key, template]) => (
-                      <div key={key} className="border rounded-lg p-4">
+                      <div key={key} className="border-2 border-gray-300 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-medium">{template.name}</h5>
+                          <h5 className="font-bold text-gray-900">{template.name}</h5>
                           <div className="flex gap-2">
                             <button
                               onClick={() => applyTemplate(key, null, false)}
-                              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 border-2 border-blue-700 font-semibold"
                               title="Aplicar template substituindo todas as configurações"
                             >
                               Aplicar
@@ -2346,7 +2458,7 @@ const ScheduleApp = () => {
                             {key !== 'manager_rotation' && key !== 'manual' && (
                               <button
                                 onClick={() => applyTemplate(key, null, true)}
-                                className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                                className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 border-2 border-green-700 font-semibold"
                                 title="Aplicar template respeitando preferências individuais"
                               >
                                 + Preferências
@@ -2358,24 +2470,24 @@ const ScheduleApp = () => {
                           {key === 'manager_rotation' ? (
                             <div className="flex items-center gap-1">
                               <Users className="w-4 h-4 text-purple-600" />
-                              <span className="text-xs text-purple-600">Gestores</span>
+                              <span className="text-xs text-purple-600 font-semibold">Gestores</span>
                             </div>
                           ) : key === 'manual' ? (
                             <div className="flex items-center gap-1">
                               <Edit className="w-4 h-4 text-gray-600" />
-                              <span className="text-xs text-gray-600">Controle Manual</span>
+                              <span className="text-xs text-gray-600 font-semibold">Controle Manual</span>
                             </div>
                           ) : (
                             template.pattern.map((status, index) => (
                               <div
                                 key={index}
-                                className={`w-4 h-4 rounded ${statusColors[status]}`}
+                                className={`w-4 h-4 rounded border border-gray-600 ${statusColors[status]}`}
                                 title={statusLabels[status]}
                               ></div>
                             ))
                           )}
                         </div>
-                        <div className="text-xs text-gray-600 mt-1">
+                        <div className="text-xs text-gray-700 mt-1 font-medium">
                           {key === 'manager_rotation' 
                             ? 'Mínimo de 2 gestores presenciais por dia'
                             : key === 'manual'
@@ -2389,32 +2501,32 @@ const ScheduleApp = () => {
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-3">Ações Rápidas</h4>
-                  <div className="space-y-3 border rounded-lg p-4">
+                  <h4 className="font-bold mb-3 text-gray-800">Ações Rápidas</h4>
+                  <div className="space-y-3 border-2 border-gray-400 rounded-lg p-4">
                     <button
                       onClick={copyPreviousWeek}
-                      className="w-full flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-900 rounded hover:bg-blue-200 border-2 border-blue-400 font-semibold"
                     >
                       <Copy className="w-4 h-4" />
                       Replicar 1ª Semana
                     </button>
                     <button
                       onClick={() => applyTemplate('4x1')}
-                      className="w-full flex items-center gap-2 px-3 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200"
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-green-100 text-green-900 rounded hover:bg-green-200 border-2 border-green-400 font-semibold"
                     >
                       <RotateCcw className="w-4 h-4" />
                       Aplicar 4x1
                     </button>
                     <button
                       onClick={() => applyTemplate('manager_rotation')}
-                      className="w-full flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-800 rounded hover:bg-purple-200"
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-900 rounded hover:bg-purple-200 border-2 border-purple-400 font-semibold"
                     >
                       <Users className="w-4 h-4" />
                       Meta de Gestores
                     </button>
                     <button
                       onClick={() => applyTemplate('manual')}
-                      className="w-full flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-900 rounded hover:bg-gray-200 border-2 border-gray-400 font-semibold"
                     >
                       <Edit className="w-4 h-4" />
                       Modo Manual
@@ -2430,13 +2542,13 @@ const ScheduleApp = () => {
         {activeTab === 'reports' && userRole !== 'employee' && (
           <div className="space-y-6">
             {/* Controles de Período */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="font-semibold mb-4">📊 Configuração do Período de Análise</h3>
+            <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
+              <h3 className="font-bold mb-4 text-gray-900">📊 Configuração do Período de Análise</h3>
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                 {/* Modo de Período */}
                 <div className="lg:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Modo de Análise</label>
+                  <label className="block text-sm font-bold text-gray-800 mb-2">Modo de Análise</label>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2">
                       <input
@@ -2447,7 +2559,7 @@ const ScheduleApp = () => {
                         onChange={(e) => setReportPeriodMode(e.target.value)}
                         className="text-blue-600"
                       />
-                      <span className="text-sm">📅 Mês Específico</span>
+                      <span className="text-sm font-semibold">📅 Mês Específico</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -2458,7 +2570,7 @@ const ScheduleApp = () => {
                         onChange={(e) => setReportPeriodMode(e.target.value)}
                         className="text-blue-600"
                       />
-                      <span className="text-sm">📆 Período Personalizado</span>
+                      <span className="text-sm font-semibold">📆 Período Personalizado</span>
                     </label>
                   </div>
                 </div>
@@ -2467,7 +2579,7 @@ const ScheduleApp = () => {
                 <div className="lg:col-span-1">
                   {reportPeriodMode === 'month' ? (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Mês/Ano</label>
+                      <label className="block text-sm font-bold text-gray-800 mb-2">Mês/Ano</label>
                       <input
                         type="month"
                         value={`${selectedReportMonth.getFullYear()}-${String(selectedReportMonth.getMonth() + 1).padStart(2, '0')}`}
@@ -2475,27 +2587,27 @@ const ScheduleApp = () => {
                           const [year, month] = e.target.value.split('-');
                           setSelectedReportMonth(new Date(parseInt(year), parseInt(month) - 1, 1));
                         }}
-                        className="w-full px-3 py-2 border rounded-lg"
+                        className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                       />
                     </div>
                   ) : (
                     <div className="space-y-2">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Data de Início</label>
+                        <label className="block text-sm font-bold text-gray-800 mb-1">Data de Início</label>
                         <input
                           type="date"
                           value={reportStartDate}
                           onChange={(e) => setReportStartDate(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Data de Fim</label>
+                        <label className="block text-sm font-bold text-gray-800 mb-1">Data de Fim</label>
                         <input
                           type="date"
                           value={reportEndDate}
                           onChange={(e) => setReportEndDate(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                         />
                       </div>
                     </div>
@@ -2506,12 +2618,12 @@ const ScheduleApp = () => {
                 <div className="lg:col-span-1 flex flex-col justify-end">
                   <button
                     onClick={resetToCurrentMonth}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-2"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-2 border-2 border-blue-700 font-semibold"
                   >
                     🔄 Mês Atual
                   </button>
                   {advancedReportData.isValidPeriod && (
-                    <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                    <div className="text-xs text-gray-700 bg-gray-100 p-2 rounded border-2 border-gray-300 font-semibold">
                       📊 <strong>{advancedReportData.totalWorkdays} dias úteis</strong> no período
                     </div>
                   )}
@@ -2520,10 +2632,10 @@ const ScheduleApp = () => {
 
               {/* Validação para Período Personalizado */}
               {reportPeriodMode === 'custom' && (!reportStartDate || !reportEndDate) && (
-                <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                <div className="bg-yellow-50 border-2 border-yellow-300 p-3 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <span className="text-yellow-600">⚠️</span>
-                    <span className="text-sm text-yellow-800">
+                    <span className="text-yellow-700">⚠️</span>
+                    <span className="text-sm text-yellow-800 font-semibold">
                       Preencha as datas de início e fim.
                     </span>
                   </div>
@@ -2534,46 +2646,46 @@ const ScheduleApp = () => {
             {/* Cards de Resumo - Médias */}
             {advancedReportData.isValidPeriod && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-green-600">
+                <div className="bg-green-50 p-4 rounded-lg text-center border-2 border-green-300">
+                  <div className="text-2xl font-bold text-green-700">
                     {advancedReportData.averages.office.toFixed(1)}
                   </div>
-                  <div className="text-sm text-green-700">Média Presencial</div>
-                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
+                  <div className="text-sm text-green-800 font-semibold">Média Presencial</div>
+                  <div className="text-xs text-gray-600 font-medium">(dias/pessoa)</div>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-300">
+                  <div className="text-2xl font-bold text-blue-700">
                     {advancedReportData.averages.home.toFixed(1)}
                   </div>
-                  <div className="text-sm text-blue-700">Média Home Office</div>
-                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
+                  <div className="text-sm text-blue-800 font-semibold">Média Home Office</div>
+                  <div className="text-xs text-gray-600 font-medium">(dias/pessoa)</div>
                 </div>
-                <div className="bg-orange-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-orange-600">
+                <div className="bg-orange-50 p-4 rounded-lg text-center border-2 border-orange-300">
+                  <div className="text-2xl font-bold text-orange-700">
                     {advancedReportData.averages.vacation.toFixed(1)}
                   </div>
-                  <div className="text-sm text-orange-700">Média Férias</div>
-                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
+                  <div className="text-sm text-orange-800 font-semibold">Média Férias</div>
+                  <div className="text-xs text-gray-600 font-medium">(dias/pessoa)</div>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-gray-600">
+                <div className="bg-gray-100 p-4 rounded-lg text-center border-2 border-gray-400">
+                  <div className="text-2xl font-bold text-gray-800">
                     {advancedReportData.averages.holiday.toFixed(1)}
                   </div>
-                  <div className="text-sm text-gray-700">Média Plantão</div>
-                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
+                  <div className="text-sm text-gray-800 font-semibold">Média Plantão</div>
+                  <div className="text-xs text-gray-600 font-medium">(dias/pessoa)</div>
                 </div>
               </div>
             )}
 
             {/* Estatísticas Individuais */}
             {advancedReportData.isValidPeriod && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="font-semibold mb-4">Estatísticas Individuais por Pessoa</h3>
+              <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
+                <h3 className="font-bold mb-4 text-gray-900">Estatísticas Individuais por Pessoa</h3>
                 
                 {/* Legenda das Estatísticas */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h4 className="font-medium text-gray-800 mb-2">ℹ️ Sobre os Cálculos:</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
+                <div className="bg-gray-100 p-4 rounded-lg mb-4 border-2 border-gray-300">
+                  <h4 className="font-bold text-gray-900 mb-2">ℹ️ Sobre os Cálculos:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
                     <div>• <strong>Dias úteis:</strong> segunda a sexta</div>
                     <div>• <strong>Percentual:</strong> exclui férias e feriados</div>
                     <div>• <strong>Dados insuficientes:</strong> menos de 3 dias válidos</div>
@@ -2605,34 +2717,34 @@ const ScheduleApp = () => {
                         key={stat.name} 
                         className={`p-4 rounded-lg border-2 transition-all ${
                           hasInsufficientData
-                            ? 'border-gray-300 bg-gray-50'
+                            ? 'border-gray-400 bg-gray-100'
                             : isHighDeviation 
-                              ? 'border-red-300 bg-red-50' 
+                              ? 'border-red-400 bg-red-50' 
                               : isLowPresence || isHighPresence
-                                ? 'border-yellow-300 bg-yellow-50'
-                                : 'border-gray-200 bg-white'
+                                ? 'border-yellow-400 bg-yellow-50'
+                                : 'border-gray-300 bg-white'
                         }`}
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm truncate">{getDisplayName(stat.name)}</h4>
-                            <div className="text-xs text-gray-600">
+                            <h4 className="font-bold text-sm truncate text-gray-900">{getDisplayName(stat.name)}</h4>
+                            <div className="text-xs text-gray-700 font-medium">
                               {employees.find(emp => emp.name === stat.name)?.team || 'Sem equipe'}
                             </div>
                             {hasInsufficientData && (
-                              <div className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded mt-1">
+                              <div className="text-xs text-gray-600 bg-gray-200 px-2 py-1 rounded mt-1 border border-gray-400 font-semibold">
                                 ⚠️ Poucos dados ({stat.validDays} dias)
                               </div>
                             )}
                           </div>
                           <div className="ml-2">
                             {hasInsufficientData ? (
-                              <span className="text-gray-400 text-lg" title="Dados insuficientes">📊</span>
+                              <span className="text-gray-500 text-lg" title="Dados insuficientes">📊</span>
                             ) : (
                               <>
-                                {isHighDeviation && <span className="text-red-600 text-lg" title="Grande discrepância">⚠️</span>}
-                                {isLowPresence && <span className="text-blue-600 text-lg" title="Baixa presença">🏠</span>}
-                                {isHighPresence && <span className="text-green-600 text-lg" title="Alta presença">🏢</span>}
+                                {isHighDeviation && <span className="text-red-700 text-lg" title="Grande discrepância">⚠️</span>}
+                                {isLowPresence && <span className="text-blue-700 text-lg" title="Baixa presença">🏠</span>}
+                                {isHighPresence && <span className="text-green-700 text-lg" title="Alta presença">🏢</span>}
                               </>
                             )}
                           </div>
@@ -2640,33 +2752,33 @@ const ScheduleApp = () => {
                         
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-600">🟢 Presencial:</span>
-                            <span className="font-medium text-sm">{stat.office} dias</span>
+                            <span className="text-xs text-gray-700 font-medium">🟢 Presencial:</span>
+                            <span className="font-bold text-sm text-gray-900">{stat.office} dias</span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-600">🔵 Home Office:</span>
-                            <span className="font-medium text-sm">{stat.home} dias</span>
+                            <span className="text-xs text-gray-700 font-medium">🔵 Home Office:</span>
+                            <span className="font-bold text-sm text-gray-900">{stat.home} dias</span>
                           </div>
                           {stat.vacation > 0 && (
                             <div className="flex justify-between items-center">
-                              <span className="text-xs text-gray-600">🟠 Férias:</span>
-                              <span className="font-medium text-sm">{stat.vacation} dias</span>
+                              <span className="text-xs text-gray-700 font-medium">🟠 Férias:</span>
+                              <span className="font-bold text-sm text-gray-900">{stat.vacation} dias</span>
                             </div>
                           )}
                           {stat.holiday > 0 && (
                             <div className="flex justify-between items-center">
-                              <span className="text-xs text-gray-600">⚫ Plantão:</span>
-                              <span className="font-medium text-sm">{stat.holiday} dias</span>
+                              <span className="text-xs text-gray-700 font-medium">⚫ Plantão:</span>
+                              <span className="font-bold text-sm text-gray-900">{stat.holiday} dias</span>
                             </div>
                           )}
                           
                           {!hasInsufficientData && stat.workDays > 0 && (
                             <div className="mt-3">
                               <div className="flex justify-between text-xs mb-1">
-                                <span>Presencial</span>
-                                <span className="font-medium">{presentialPercentage.toFixed(0)}%</span>
+                                <span className="font-medium">Presencial</span>
+                                <span className="font-bold">{presentialPercentage.toFixed(0)}%</span>
                               </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div className="w-full bg-gray-200 rounded-full h-2 border border-gray-400">
                                 <div 
                                   className={`h-2 rounded-full transition-all ${
                                     presentialPercentage < 30 ? 'bg-blue-500' :
@@ -2681,17 +2793,17 @@ const ScheduleApp = () => {
                           {!hasInsufficientData && (
                             <>
                               {isHighDeviation && (
-                                <div className="mt-2 text-xs text-red-600 bg-red-100 p-2 rounded">
+                                <div className="mt-2 text-xs text-red-800 bg-red-100 p-2 rounded border border-red-300 font-semibold">
                                   <strong>⚠️ Discrepância detectada</strong>
                                 </div>
                               )}
                               {isLowPresence && !isHighDeviation && (
-                                <div className="mt-2 text-xs text-blue-600 bg-blue-100 p-2 rounded">
+                                <div className="mt-2 text-xs text-blue-800 bg-blue-100 p-2 rounded border border-blue-300 font-semibold">
                                   <strong>🏠 Baixa presença</strong>
                                 </div>
                               )}
                               {isHighPresence && !isHighDeviation && (
-                                <div className="mt-2 text-xs text-green-600 bg-green-100 p-2 rounded">
+                                <div className="mt-2 text-xs text-green-800 bg-green-100 p-2 rounded border border-green-300 font-semibold">
                                   <strong>🏢 Alta presença</strong>
                                 </div>
                               )}
@@ -2705,17 +2817,17 @@ const ScheduleApp = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="font-semibold mb-4">Histórico de Alterações</h3>
-              <div className="space-y-2 max-h-64 overflow-y-auto border rounded-lg p-4">
+            <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
+              <h3 className="font-bold mb-4 text-gray-900">Histórico de Alterações</h3>
+              <div className="space-y-2 max-h-64 overflow-y-auto border-2 border-gray-400 rounded-lg p-4">
                 {changeHistory.slice(0, 10).map(change => (
-                  <div key={change.id} className="flex items-center justify-between p-3 bg-gray-50 rounded text-sm">
-                    <span>{change.action}</span>
-                    <span className="text-gray-500">{change.timestamp.toLocaleString()}</span>
+                  <div key={change.id} className="flex items-center justify-between p-3 bg-gray-100 rounded text-sm border border-gray-300">
+                    <span className="font-medium text-gray-900">{change.action}</span>
+                    <span className="text-gray-700 font-medium">{change.timestamp.toLocaleString()}</span>
                   </div>
                 ))}
                 {changeHistory.length === 0 && (
-                  <div className="text-center text-gray-500 py-8">
+                  <div className="text-center text-gray-600 py-8 font-medium">
                     Nenhuma alteração registrada ainda
                   </div>
                 )}
@@ -2728,20 +2840,20 @@ const ScheduleApp = () => {
         {activeTab === 'settings' && userRole !== 'employee' && (
           <div className="space-y-6">
             {/* Botão Iniciar Nova Escala */}
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg shadow-sm p-6">
+            <div className="bg-red-50 border-2 border-red-300 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-red-800 mb-2">🔄 Iniciar Nova Escala</h3>
-                  <p className="text-sm text-red-700 mb-1">
+                  <h3 className="text-lg font-bold text-red-900 mb-2">🔄 Iniciar Nova Escala</h3>
+                  <p className="text-sm text-red-800 mb-1 font-semibold">
                     <strong>⚠️ CUIDADO:</strong> Reset completo do sistema!
                   </p>
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-red-700 font-medium">
                     Remove TODAS as pessoas e limpa todas as escalas.
                   </p>
                 </div>
                 <button
                   onClick={startNewSchedule}
-                  className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold border-2 border-red-800 transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold border-2 border-red-800 transition-all hover:scale-105"
                   disabled={userRole === 'employee'}
                 >
                   <RotateCcw className="w-5 h-5" />
@@ -2750,16 +2862,16 @@ const ScheduleApp = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="font-semibold mb-4">Configurações do Sistema</h3>
+            <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-gray-300">
+              <h3 className="font-bold mb-4 text-gray-900">Configurações do Sistema</h3>
               
               {/* Info sobre mudanças */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
                 <div className="flex items-start gap-3">
-                  <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
+                  <div className="w-5 h-5 text-blue-700 mt-0.5">ℹ️</div>
                   <div>
-                    <h4 className="font-medium text-blue-900 mb-1">Sistema de Metas Atualizado</h4>
-                    <div className="text-sm text-blue-700 space-y-1">
+                    <h4 className="font-bold text-blue-900 mb-1">Sistema de Metas Atualizado</h4>
+                    <div className="text-sm text-blue-800 space-y-1 font-medium">
                       <div>• <strong>Meta presencial:</strong> Sempre respeitada (prioridade absoluta)</div>
                       <div>• <strong>Capacidade máxima:</strong> Apenas indicador visual - não limita</div>
                       <div>• <strong>Superlotação:</strong> Fundo vermelho no calendário quando exceder</div>
@@ -2770,11 +2882,11 @@ const ScheduleApp = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium mb-3">Capacidade e Metas</h4>
+                <div className="bg-gray-100 p-4 rounded-lg border-2 border-gray-300">
+                  <h4 className="font-bold mb-3 text-gray-900">Capacidade e Metas</h4>
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-bold text-gray-800 mb-1">
                         Capacidade Máxima do Escritório (Indicador Visual)
                       </label>
                       <div className="flex items-center gap-3">
@@ -2782,15 +2894,15 @@ const ScheduleApp = () => {
                           type="number"
                           value={maxCapacity}
                           onChange={(e) => setMaxCapacity(Number(e.target.value))}
-                          className="flex-1 px-3 py-2 border rounded-lg"
+                          className="flex-1 px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                           min="1"
                         />
-                        <span className="text-sm text-gray-600">pessoas</span>
+                        <span className="text-sm text-gray-700 font-medium">pessoas</span>
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-600 mt-1 font-medium">
                         📊 Apenas para alerta visual - não limita a meta presencial
                       </div>
-                      <div className="text-xs text-orange-600 mt-1">
+                      <div className="text-xs text-orange-700 mt-1 font-semibold">
                         ⚠️ Dias com mais pessoas ficam com fundo vermelho
                       </div>
                     </div>
@@ -2804,28 +2916,28 @@ const ScheduleApp = () => {
         {/* Modals */}
         {showAddEmployee && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border-2 border-gray-400">
               <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Adicionar Nova Pessoa</h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">Adicionar Nova Pessoa</h3>
                 <div className="space-y-3">
                   <input
                     type="text"
                     placeholder="Nome completo"
                     value={newEmployee.name}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                   />
                   <input
                     type="text"
                     placeholder="Equipe"
                     value={newEmployee.team}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, team: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                   />
                   <select
                     value={newEmployee.type}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, type: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                   >
                     <option value="variable">Presença Variável</option>
                     <option value="always_office">Sempre Presencial</option>
@@ -2834,7 +2946,7 @@ const ScheduleApp = () => {
                   <select
                     value={newEmployee.workingHours}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, workingHours: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                   >
                     {Object.entries(workingHours).map(([key, hours]) => (
                       <option key={key} value={key}>{hours.label}</option>
@@ -2846,19 +2958,19 @@ const ScheduleApp = () => {
                       checked={newEmployee.isManager}
                       onChange={(e) => setNewEmployee(prev => ({ ...prev, isManager: e.target.checked }))}
                     />
-                    <span className="text-sm">Gestor</span>
+                    <span className="text-sm font-semibold">Gestor</span>
                   </label>
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={addEmployee}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-2 border-blue-700 font-semibold"
                   >
                     Adicionar
                   </button>
                   <button
                     onClick={() => setShowAddEmployee(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                    className="px-4 py-2 bg-gray-400 text-gray-800 rounded-lg hover:bg-gray-500 border-2 border-gray-500 font-semibold"
                   >
                     Cancelar
                   </button>
@@ -2871,14 +2983,14 @@ const ScheduleApp = () => {
         {/* Modal de Importação em Massa */}
         {showImportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border-2 border-gray-400">
               <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">📋 Importar Lista de Pessoas</h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">📋 Importar Lista de Pessoas</h3>
                 
-                <div className="bg-blue-50 p-3 rounded-lg mb-4">
-                  <div className="text-sm text-blue-800">
+                <div className="bg-blue-50 p-3 rounded-lg mb-4 border-2 border-blue-300">
+                  <div className="text-sm text-blue-900">
                     <strong>💡 Como usar:</strong>
-                    <div className="mt-1 space-y-1">
+                    <div className="mt-1 space-y-1 font-medium">
                       <div>• Cole ou digite um nome por linha</div>
                       <div>• Todas as pessoas serão criadas como "Presença Variável"</div>
                       <div>• Horário padrão: 9h às 17h (você pode editar depois)</div>
@@ -2888,17 +3000,17 @@ const ScheduleApp = () => {
                 </div>
                 
                 <div className="space-y-3">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-bold text-gray-800">
                     Lista de Nomes (um por linha):
                   </label>
                   <textarea
                     value={importText}
                     onChange={(e) => setImportText(e.target.value)}
                     placeholder="João da Silva&#10;Maria Santos&#10;Pedro Oliveira&#10;Ana Costa"
-                    className="w-full px-3 py-2 border rounded-lg h-40 resize-none"
+                    className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg h-40 resize-none font-medium"
                     rows={8}
                   />
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-600 font-medium">
                     {importText.trim() ? `${importText.trim().split('\n').filter(n => n.trim()).length} pessoas para importar` : 'Nenhuma pessoa para importar'}
                   </div>
                 </div>
@@ -2906,7 +3018,7 @@ const ScheduleApp = () => {
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={importEmployees}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border-2 border-green-700 font-semibold"
                     disabled={!importText.trim()}
                   >
                     ✅ Importar Pessoas
@@ -2916,7 +3028,7 @@ const ScheduleApp = () => {
                       setShowImportModal(false);
                       setImportText('');
                     }}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                    className="px-4 py-2 bg-gray-400 text-gray-800 rounded-lg hover:bg-gray-500 border-2 border-gray-500 font-semibold"
                   >
                     Cancelar
                   </button>
@@ -2928,33 +3040,33 @@ const ScheduleApp = () => {
 
         {showVacationForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border-2 border-gray-400">
               <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Definir Período de Férias</h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">Definir Período de Férias</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Data de Início</label>
+                    <label className="block text-sm font-bold text-gray-800 mb-1">Data de Início</label>
                     <input
                       type="date"
                       value={vacationData.start}
                       onChange={(e) => setVacationData(prev => ({ ...prev, start: e.target.value }))}
-                      className="w-full px-3 py-2 border rounded-lg"
+                      className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Data de Fim</label>
+                    <label className="block text-sm font-bold text-gray-800 mb-1">Data de Fim</label>
                     <input
                       type="date"
                       value={vacationData.end}
                       onChange={(e) => setVacationData(prev => ({ ...prev, end: e.target.value }))}
-                      className="w-full px-3 py-2 border rounded-lg"
+                      className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg font-medium"
                     />
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setPersonVacation(vacationPersonId, vacationData.start, vacationData.end)}
-                    className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+                    className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 border-2 border-orange-700 font-semibold"
                     disabled={!vacationData.start || !vacationData.end}
                   >
                     Definir Férias
@@ -2965,7 +3077,7 @@ const ScheduleApp = () => {
                       setVacationPersonId(null);
                       setVacationData({ start: '', end: '' });
                     }}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                    className="px-4 py-2 bg-gray-400 text-gray-800 rounded-lg hover:bg-gray-500 border-2 border-gray-500 font-semibold"
                   >
                     Cancelar
                   </button>
@@ -2978,17 +3090,17 @@ const ScheduleApp = () => {
         {/* Modal de Template Manual */}
         {showManualTemplateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border-2 border-gray-400">
               <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">🎯 Configurar Template Manual</h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">🎯 Configurar Template Manual</h3>
                 
                 <div className="mb-4">
-                  <p className="text-sm text-gray-700 font-medium mb-3">
+                  <p className="text-sm text-gray-800 font-semibold mb-3">
                     Como você quer inicializar as pessoas no calendário?
                   </p>
                   
                   <div className="space-y-3">
-                    <label className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
@@ -2998,14 +3110,14 @@ const ScheduleApp = () => {
                         className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-medium">⚫ Deixar em branco</div>
-                        <div className="text-sm text-gray-600">
+                        <div className="font-bold">⚫ Deixar em branco</div>
+                        <div className="text-sm text-gray-700 font-medium">
                           Pessoas não aparecem no calendário • Você define uma por uma do zero
                         </div>
                       </div>
                     </label>
                     
-                    <label className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
@@ -3015,14 +3127,14 @@ const ScheduleApp = () => {
                         className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-medium">🟢 Iniciar todas como Presencial</div>
-                        <div className="text-sm text-gray-600">
+                        <div className="font-bold">🟢 Iniciar todas como Presencial</div>
+                        <div className="text-sm text-gray-700 font-medium">
                           Todas as pessoas aparecem no escritório • Clique nos nomes para mandar para home office
                         </div>
                       </div>
                     </label>
                     
-                    <label className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
@@ -3032,14 +3144,14 @@ const ScheduleApp = () => {
                         className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-medium">🔵 Iniciar todas como Home Office</div>
-                        <div className="text-sm text-gray-600">
+                        <div className="font-bold">🔵 Iniciar todas como Home Office</div>
+                        <div className="text-sm text-gray-700 font-medium">
                           Todas as pessoas aparecem em casa • Clique nos nomes para trazer ao escritório
                         </div>
                       </div>
                     </label>
                     
-                    <label className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
@@ -3049,8 +3161,8 @@ const ScheduleApp = () => {
                         className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-medium">⚡ Distribuir automaticamente (50/50)</div>
-                        <div className="text-sm text-gray-600">
+                        <div className="font-bold">⚡ Distribuir automaticamente (50/50)</div>
+                        <div className="text-sm text-gray-700 font-medium">
                           Metade presencial, metade home office • Distribuição aleatória como ponto de partida
                         </div>
                       </div>
@@ -3058,10 +3170,10 @@ const ScheduleApp = () => {
                   </div>
                 </div>
                 
-                <div className="bg-blue-50 p-3 rounded-lg mb-6">
-                  <div className="text-sm text-blue-800">
+                <div className="bg-blue-50 p-3 rounded-lg mb-6 border-2 border-blue-300">
+                  <div className="text-sm text-blue-900">
                     <strong>💡 Explicação:</strong>
-                    <div className="mt-1">
+                    <div className="mt-1 font-medium">
                       O Template Manual limpa todas as configurações automáticas e te dá controle total. 
                       Escolha como quer que as pessoas apareçam inicialmente no calendário - depois é só 
                       clicar nos nomes para alternar entre presencial/home office conforme sua necessidade.
@@ -3072,7 +3184,7 @@ const ScheduleApp = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() => executeManualTemplate(manualTemplateOption)}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors border-2 border-blue-700 font-semibold"
                   >
                     Aplicar Template
                   </button>
@@ -3081,7 +3193,7 @@ const ScheduleApp = () => {
                       setShowManualTemplateModal(false);
                       setManualTemplateOption('blank');
                     }}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                    className="px-4 py-2 bg-gray-400 text-gray-800 rounded-lg hover:bg-gray-500 transition-colors border-2 border-gray-500 font-semibold"
                   >
                     Cancelar
                   </button>
@@ -3094,24 +3206,24 @@ const ScheduleApp = () => {
         {/* Modal de Confirmação Customizado */}
         {showConfirmModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border-2 border-gray-400">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
-                    confirmModalData.type === 'danger' ? 'bg-red-100 text-red-600' :
-                    confirmModalData.type === 'warning' ? 'bg-yellow-100 text-yellow-600' :
-                    'bg-blue-100 text-blue-600'
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl border-2 ${
+                    confirmModalData.type === 'danger' ? 'bg-red-100 text-red-700 border-red-400' :
+                    confirmModalData.type === 'warning' ? 'bg-yellow-100 text-yellow-700 border-yellow-400' :
+                    'bg-blue-100 text-blue-700 border-blue-400'
                   }`}>
                     {confirmModalData.type === 'danger' ? '⚠️' :
                      confirmModalData.type === 'warning' ? '❓' : 'ℹ️'}
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-bold text-gray-900">
                     {confirmModalData.title}
                   </h3>
                 </div>
                 
                 <div className="mb-6">
-                  <p className="text-gray-700 whitespace-pre-line">
+                  <p className="text-gray-800 whitespace-pre-line font-medium">
                     {confirmModalData.message}
                   </p>
                 </div>
@@ -3120,17 +3232,17 @@ const ScheduleApp = () => {
                   {confirmModalData.cancelText && (
                     <button
                       onClick={confirmModalData.onCancel}
-                      className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                      className="flex-1 px-4 py-2 bg-gray-400 text-gray-800 rounded-lg hover:bg-gray-500 transition-colors border-2 border-gray-500 font-semibold"
                     >
                       {confirmModalData.cancelText}
                     </button>
                   )}
                   <button
                     onClick={confirmModalData.onConfirm}
-                    className={`flex-1 px-4 py-2 rounded-lg transition-colors font-medium ${
+                    className={`flex-1 px-4 py-2 rounded-lg transition-colors font-bold border-2 ${
                       confirmModalData.type === 'danger' 
-                        ? 'bg-red-600 text-white hover:bg-red-700' 
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                        ? 'bg-red-600 text-white hover:bg-red-700 border-red-700' 
+                        : 'bg-blue-600 text-white hover:bg-blue-700 border-blue-700'
                     }`}
                   >
                     {confirmModalData.confirmText}
@@ -3144,48 +3256,48 @@ const ScheduleApp = () => {
         {/* Help Modal */}
         {showHelp && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-              <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
-                <h3 className="text-xl font-semibold">📚 Ajuda e Legendas</h3>
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border-2 border-gray-400">
+              <div className="sticky top-0 bg-white border-b-2 border-gray-400 px-6 py-4 flex items-center justify-between z-10">
+                <h3 className="text-xl font-bold text-gray-900">📚 Ajuda e Legendas</h3>
                 <button
                   onClick={() => {
                     setShowHelp(false);
                     setActiveHelpTab('basico');
                   }}
-                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+                  className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg border-2 border-gray-400"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Abas de Navegação */}
-              <div className="flex gap-1 px-6 pt-4 border-b bg-gray-50">
+              <div className="flex gap-1 px-6 pt-4 border-b-2 border-gray-400 bg-gray-100">
                 <button
                   onClick={() => setActiveHelpTab('basico')}
-                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-t-lg text-sm font-bold transition-colors border-2 ${
                     activeHelpTab === 'basico'
-                      ? 'bg-white text-blue-600 border-t-2 border-blue-600'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                      ? 'bg-white text-blue-700 border-blue-600 border-b-0'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200 border-gray-300'
                   }`}
                 >
                   🎯 Básico
                 </button>
                 <button
                   onClick={() => setActiveHelpTab('funcionalidades')}
-                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-t-lg text-sm font-bold transition-colors border-2 ${
                     activeHelpTab === 'funcionalidades'
-                      ? 'bg-white text-blue-600 border-t-2 border-blue-600'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                      ? 'bg-white text-blue-700 border-blue-600 border-b-0'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200 border-gray-300'
                   }`}
                 >
                   ⚙️ Funcionalidades
                 </button>
                 <button
                   onClick={() => setActiveHelpTab('dicas')}
-                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-t-lg text-sm font-bold transition-colors border-2 ${
                     activeHelpTab === 'dicas'
-                      ? 'bg-white text-blue-600 border-t-2 border-blue-600'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                      ? 'bg-white text-blue-700 border-blue-600 border-b-0'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200 border-gray-300'
                   }`}
                 >
                   💡 Dicas
@@ -3197,51 +3309,51 @@ const ScheduleApp = () => {
                 {activeHelpTab === 'basico' && (
                   <div className="space-y-6">
                     {/* Perfis de Usuário */}
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-blue-800 mb-3">👥 Perfis de Usuário</h4>
+                    <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-300">
+                      <h4 className="font-bold text-blue-900 mb-3">👥 Perfis de Usuário</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">👑 Admin:</span>
-                          <span>Controle total do sistema</span>
+                          <span className="font-bold">👑 Admin:</span>
+                          <span className="font-medium">Controle total do sistema</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">👨‍💼 Gestor:</span>
-                          <span>Gerencia escalas e equipes</span>
+                          <span className="font-bold">👨‍💼 Gestor:</span>
+                          <span className="font-medium">Gerencia escalas e equipes</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">👤 Colaborador:</span>
-                          <span>Visualização apenas</span>
+                          <span className="font-bold">👤 Colaborador:</span>
+                          <span className="font-medium">Visualização apenas</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Status e Cores */}
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-green-800 mb-3">🎨 Status e Cores</h4>
+                    <div className="bg-green-50 p-4 rounded-lg border-2 border-green-300">
+                      <h4 className="font-bold text-green-900 mb-3">🎨 Status e Cores</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-green-500 flex-shrink-0"></div>
-                          <span>🟢 Presencial - Pessoa no escritório</span>
+                          <div className="w-4 h-4 rounded bg-green-500 flex-shrink-0 border border-gray-600"></div>
+                          <span className="font-medium">🟢 Presencial - Pessoa no escritório</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-blue-500 flex-shrink-0"></div>
-                          <span>🔵 Home Office - Pessoa trabalhando de casa</span>
+                          <div className="w-4 h-4 rounded bg-blue-500 flex-shrink-0 border border-gray-600"></div>
+                          <span className="font-medium">🔵 Home Office - Pessoa trabalhando de casa</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-orange-500 flex-shrink-0"></div>
-                          <span>🟠 Férias - Pessoa de férias</span>
+                          <div className="w-4 h-4 rounded bg-orange-500 flex-shrink-0 border border-gray-600"></div>
+                          <span className="font-medium">🟠 Férias - Pessoa de férias</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-gray-500 flex-shrink-0"></div>
-                          <span>⚫ Plantão/Feriado - Pessoa trabalhando em dia especial</span>
+                          <div className="w-4 h-4 rounded bg-gray-500 flex-shrink-0 border border-gray-600"></div>
+                          <span className="font-medium">⚫ Plantão/Feriado - Pessoa trabalhando em dia especial</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Tipos de Funcionário */}
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-purple-800 mb-3">👔 Regimes de Trabalho</h4>
-                      <div className="space-y-2 text-sm">
+                    <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-300">
+                      <h4 className="font-bold text-purple-900 mb-3">👔 Regimes de Trabalho</h4>
+                      <div className="space-y-2 text-sm font-medium">
                         <div><strong>Sempre Presencial:</strong> 5 dias/semana no escritório</div>
                         <div><strong>Sempre Home Office:</strong> 0 dias presencial</div>
                         <div><strong>Presença Variável:</strong> 1-5 dias configuráveis</div>
@@ -3254,9 +3366,9 @@ const ScheduleApp = () => {
                 {activeHelpTab === 'funcionalidades' && (
                   <div className="space-y-6">
                     {/* Templates */}
-                    <div className="bg-yellow-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-yellow-800 mb-3">📋 Templates de Escala</h4>
-                      <div className="space-y-2 text-sm">
+                    <div className="bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
+                      <h4 className="font-bold text-yellow-900 mb-3">📋 Templates de Escala</h4>
+                      <div className="space-y-2 text-sm font-medium">
                         <div><strong>3x2:</strong> 3 dias presencial + 2 dias home office por semana</div>
                         <div><strong>4x1:</strong> 4 dias presencial + 1 dia home office por semana</div>
                         <div><strong>2x3:</strong> 2 dias presencial + 3 dias home office por semana</div>
@@ -3267,9 +3379,9 @@ const ScheduleApp = () => {
                     </div>
 
                     {/* Filtros */}
-                    <div className="bg-indigo-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-indigo-800 mb-3">🔍 Sistema de Filtros</h4>
-                      <div className="space-y-2 text-sm">
+                    <div className="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-300">
+                      <h4 className="font-bold text-indigo-900 mb-3">🔍 Sistema de Filtros</h4>
+                      <div className="space-y-2 text-sm font-medium">
                         <div><strong>Por Nome:</strong> Busca parcial no nome da pessoa</div>
                         <div><strong>Por Equipe:</strong> Filtra pessoas de equipes específicas</div>
                         <div><strong>Por Status Atual:</strong> Mostra apenas pessoas presenciais, home office, férias ou plantão</div>
@@ -3283,32 +3395,32 @@ const ScheduleApp = () => {
                 {activeHelpTab === 'dicas' && (
                   <div className="space-y-6">
                     {/* Indicadores Visuais */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-800 mb-3">📊 Indicadores</h4>
-                      <div className="space-y-2 text-sm">
+                    <div className="bg-gray-100 p-4 rounded-lg border-2 border-gray-400">
+                      <h4 className="font-bold text-gray-900 mb-3">📊 Indicadores</h4>
+                      <div className="space-y-2 text-sm font-medium">
                         <div className="flex items-center gap-2">
-                          <span className="text-green-600 flex-shrink-0">✓</span>
+                          <span className="text-green-700 flex-shrink-0">✓</span>
                           <span>Meta atingida - número ideal de pessoas no escritório</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-orange-600 flex-shrink-0">↑</span>
+                          <span className="text-orange-700 flex-shrink-0">↑</span>
                           <span>Poucas pessoas - abaixo da meta estabelecida</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-blue-600 flex-shrink-0">↓</span>
+                          <span className="text-blue-700 flex-shrink-0">↓</span>
                           <span>Muitas pessoas - acima da meta estabelecida</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                          <AlertTriangle className="w-4 h-4 text-red-700 flex-shrink-0" />
                           <span>Capacidade excedida - limite físico ultrapassado</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Atalhos e Dicas */}
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-green-800 mb-3">⌨️ Atalhos Rápidos</h4>
-                      <div className="space-y-2 text-sm">
+                    <div className="bg-green-50 p-4 rounded-lg border-2 border-green-300">
+                      <h4 className="font-bold text-green-900 mb-3">⌨️ Atalhos Rápidos</h4>
+                      <div className="space-y-2 text-sm font-medium">
                         <div><strong>Clique nos nomes:</strong> Alterna entre presencial e home office (apenas pessoas variáveis)</div>
                         <div><strong>Ícone calendário:</strong> Marca/desmarca feriados nos dias úteis</div>
                         <div><strong>Ativar Plantão:</strong> Habilita plantão em fins de semana quando necessário</div>
@@ -3318,9 +3430,9 @@ const ScheduleApp = () => {
                     </div>
 
                     {/* Melhores Práticas */}
-                    <div className="bg-amber-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-amber-800 mb-3">🏆 Melhores Práticas</h4>
-                      <div className="space-y-2 text-sm">
+                    <div className="bg-amber-50 p-4 rounded-lg border-2 border-amber-300">
+                      <h4 className="font-bold text-amber-900 mb-3">🏆 Melhores Práticas</h4>
+                      <div className="space-y-2 text-sm font-medium">
                         <div><strong>1. Configure as pessoas:</strong> Defina equipes e preferências antes de aplicar templates</div>
                         <div><strong>2. Monitore relatórios:</strong> Acompanhe se as metas estão sendo cumpridas</div>
                         <div><strong>3. Planeje férias:</strong> Configure períodos de férias para planejamento adequado</div>
