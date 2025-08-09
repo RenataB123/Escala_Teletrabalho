@@ -189,7 +189,7 @@ const ScheduleApp = () => {
     
     showConfirm(
       '📂 Carregar Escala Salva',
-      `Carregar a escala salva de ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()]}?\n\n⚠️ Isso substituirá a escala atual!`,
+      `Carregar a escala salva de ${monthNames[currentDate.getMonth()]}/${currentDate.getFullYear()}?\n\n⚠️ Isso substituirá a escala atual!`,
       () => {
         setEmployees(savedData.employees || []);
         setSchedules(savedData.schedules || {});
