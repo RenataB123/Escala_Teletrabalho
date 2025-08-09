@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Users, Download, Filter, Plus, AlertTriangle, Settings, Copy, RotateCcw, FileText, Edit, X, HelpCircle } from 'lucide-react';
+import { Calendar, Users, Download, Filter, Plus, AlertTriangle, Settings, Copy, RotateCcw, FileText, Edit, X, HelpCircle, Trash2 } from 'lucide-react';
 
 const ScheduleApp = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -1044,8 +1044,13 @@ const ScheduleApp = () => {
   };
 
   const getDisplayName = (fullName) => {
-    const names = fullName.trim().split(' ');
-    return names.length >= 2 ? `${names[0]} ${names[1]}` : names[0] || '';
+    const names = fullName.trim().split(' ').filter(name => name.length > 0);
+    if (names.length === 1) {
+      return names[0];
+    } else if (names.length >= 2) {
+      return `${names[0]} ${names[names.length - 1]}`; // Primeiro + último nome
+    }
+    return '';
   };
 
   const getSortedEmployees = (employeesList) => {
@@ -1373,8 +1378,10 @@ const ScheduleApp = () => {
                                         onClick={() => toggleWeekendStaff(day, emp.id)}
                                         title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
                                       >
-                                        {getDisplayName(emp.name)}
-                                        <span className="ml-1 text-xs opacity-60">✕</span>
+                                        <div className="font-medium">
+                                          {getDisplayName(emp.name)}
+                                          <span className="ml-1 opacity-60">✕</span>
+                                        </div>
                                       </div>
                                     );
                                   })}
@@ -1479,8 +1486,10 @@ const ScheduleApp = () => {
                                       onClick={() => toggleHolidayStaff(day, emp.id)}
                                       title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
                                     >
-                                      {getDisplayName(emp.name)}
-                                      <span className="ml-1 text-xs opacity-60">✕</span>
+                                      <div className="font-medium">
+                                        {getDisplayName(emp.name)}
+                                        <span className="ml-1 opacity-60">✕</span>
+                                      </div>
                                     </div>
                                   );
                                 })}
@@ -1548,13 +1557,15 @@ const ScheduleApp = () => {
                                           emp.type === 'variable' ? '- Clique para alternar' : ''
                                         }`}
                                       >
-                                        {getDisplayName(emp.name)}
-                                        <span className="ml-1 text-xs opacity-75">
+                                        <div className="font-medium">
+                                          {getDisplayName(emp.name)}
+                                          {userRole !== 'employee' && emp.type === 'variable' && (
+                                            <span className="ml-1 opacity-60">⇄</span>
+                                          )}
+                                        </div>
+                                        <div className="text-xs opacity-75 mt-1">
                                           [{emp.workingHours || '9-17'}]
-                                        </span>
-                                        {userRole !== 'employee' && emp.type === 'variable' && (
-                                          <span className="ml-1 text-xs opacity-60">⇄</span>
-                                        )}
+                                        </div>
                                       </div>
                                     );
                                   })}
@@ -1597,13 +1608,15 @@ const ScheduleApp = () => {
                                           emp.type === 'variable' ? '- Clique para alternar' : ''
                                         }`}
                                       >
-                                        {getDisplayName(emp.name)}
-                                        <span className="ml-1 text-xs opacity-75">
+                                        <div className="font-medium">
+                                          {getDisplayName(emp.name)}
+                                          {userRole !== 'employee' && emp.type === 'variable' && (
+                                            <span className="ml-1 opacity-60">⇄</span>
+                                          )}
+                                        </div>
+                                        <div className="text-xs opacity-75 mt-1">
                                           [{emp.workingHours || '9-17'}]
-                                        </span>
-                                        {userRole !== 'employee' && emp.type === 'variable' && (
-                                          <span className="ml-1 text-xs opacity-60">⇄</span>
-                                        )}
+                                        </div>
                                       </div>
                                     );
                                   })}
@@ -1629,7 +1642,9 @@ const ScheduleApp = () => {
                                         }`}
                                         title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - De férias`}
                                       >
-                                        {getDisplayName(emp.name)}
+                                        <div className="font-medium">
+                                          {getDisplayName(emp.name)}
+                                        </div>
                                       </div>
                                     );
                                   })}
@@ -1834,52 +1849,52 @@ const ScheduleApp = () => {
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
-                                <button
-                                  onClick={() => {
-                                    showConfirm(
-                                      '❌ Excluir Pessoa',
-                                      `Tem certeza que deseja excluir ${person.name}?`,
-                                      () => {
-                                        setEmployees(prev => prev.filter(emp => emp.id !== person.id));
-                                        
-                                        if (expandedPersonId === person.id) {
-                                          setExpandedPersonId(null);
-                                          setEditingPerson(null);
-                                          setHasUnsavedChanges(false);
-                                        }
-                                        
-                                        setSchedules(prev => {
-                                          const newSchedules = { ...prev };
-                                          delete newSchedules[person.id];
-                                          return newSchedules;
-                                        });
-                                        
-                                        setVacations(prev => {
-                                          const newVacations = { ...prev };
-                                          delete newVacations[person.id];
-                                          return newVacations;
-                                        });
-                                        
-                                        if (selectedPerson && selectedPerson.id === person.id) {
-                                          setSelectedPerson(null);
-                                        }
-                                        
-                                        const change = {
-                                          id: Date.now(),
-                                          timestamp: new Date(),
-                                          action: `❌ Excluiu a pessoa ${person.name}`
-                                        };
-                                        setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
-                                      },
-                                      'danger'
-                                    );
-                                  }}
-                                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                                  title="Excluir pessoa"
-                                  disabled={userRole === 'employee'}
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
+                                  <button
+                                    onClick={() => {
+                                      showConfirm(
+                                        '❌ Excluir Pessoa',
+                                        `Tem certeza que deseja excluir ${person.name}?`,
+                                        () => {
+                                          setEmployees(prev => prev.filter(emp => emp.id !== person.id));
+                                          
+                                          if (expandedPersonId === person.id) {
+                                            setExpandedPersonId(null);
+                                            setEditingPerson(null);
+                                            setHasUnsavedChanges(false);
+                                          }
+                                          
+                                          setSchedules(prev => {
+                                            const newSchedules = { ...prev };
+                                            delete newSchedules[person.id];
+                                            return newSchedules;
+                                          });
+                                          
+                                          setVacations(prev => {
+                                            const newVacations = { ...prev };
+                                            delete newVacations[person.id];
+                                            return newVacations;
+                                          });
+                                          
+                                          if (selectedPerson && selectedPerson.id === person.id) {
+                                            setSelectedPerson(null);
+                                          }
+                                          
+                                          const change = {
+                                            id: Date.now(),
+                                            timestamp: new Date(),
+                                            action: `❌ Excluiu a pessoa ${person.name}`
+                                          };
+                                          setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
+                                        },
+                                        'danger'
+                                      );
+                                    }}
+                                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                    title="Excluir pessoa"
+                                    disabled={userRole === 'employee'}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
                               </div>
                             </div>
                             
@@ -2209,7 +2224,7 @@ const ScheduleApp = () => {
                                           }}
                                           className="flex items-center gap-2 p-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50"
                                         >
-                                          <X className="w-4 h-4" />
+                                          <Trash2 className="w-4 h-4" />
                                           Remover Férias
                                         </button>
                                       )}
