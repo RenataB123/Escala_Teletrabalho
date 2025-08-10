@@ -1435,7 +1435,7 @@ const ScheduleApp = () => {
                     <FolderOpen className="w-5 h-5 inline mr-2" />
                     Carregar
                   </button>
-                  {lastSaved && (
+                  {lastSaved instanceof Date && (
                     <div className="text-xs text-green-900 bg-green-100 px-3 py-2 rounded border-4 border-green-400 font-bold text-center">
                       ✅ Último save: {lastSaved.toLocaleTimeString()}
                     </div>
