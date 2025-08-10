@@ -1247,7 +1247,7 @@ const ScheduleApp = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Calendar className="w-10 h-10 text-blue-600" />
-              <h1 className="text-3xl font-black text-gray-900">Escalas de Trabalho</h1>
+              <h1 className="text-xl font-bold text-gray-900">Escalas de Trabalho</h1>
             </div>
             
             <div className="flex items-center gap-4">
@@ -1286,7 +1286,7 @@ const ScheduleApp = () => {
           <div className="flex gap-6 mt-6 border-b-4 border-gray-400">
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`pb-3 px-2 border-b-4 font-black text-lg transition-all ${
+              className={`pb-3 px-2 border-b-4 font-semibold text-sm transition-all ${
                 activeTab === 'calendar' 
                   ? 'border-blue-600 text-blue-600' 
                   : 'border-transparent text-gray-800 hover:text-gray-900'
@@ -1381,9 +1381,9 @@ const ScheduleApp = () => {
                 <Filter className="w-7 h-7" />
                 Filtros e Gerenciamento
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div>
-                  <label className="block text-lg font-black text-gray-900 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Colaborador
                   </label>
                   <input
@@ -1391,17 +1391,17 @@ const ScheduleApp = () => {
                     placeholder="Buscar por nome..."
                     value={filters.employee}
                     onChange={(e) => setFilters(prev => ({ ...prev, employee: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg font-black text-gray-900 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1>
                     Equipe
                   </label>
                   <select
                     value={filters.team}
                     onChange={(e) => setFilters(prev => ({ ...prev, team: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                   >
                     <option value="">Todas as equipes</option>
                     {teams.map(team => (
@@ -1411,13 +1411,13 @@ const ScheduleApp = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-lg font-black text-gray-900 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1>
                     Status Atual
                   </label>
                   <select
                     value={filters.currentStatus || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, currentStatus: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                   >
                     <option value="">Todos os status</option>
                     <option value="office">🟢 Presencial</option>
@@ -1472,7 +1472,7 @@ const ScheduleApp = () => {
                 >
                   ←
                 </button>
-                <h2 className="text-3xl font-black text-gray-900">
+                <h2 className="text-xl font-black text-gray-900">
                   {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </h2>
                 <button
@@ -1509,13 +1509,13 @@ const ScheduleApp = () => {
               {employees.length === 0 && (
                 <div className="text-center py-12">
                   <div className="text-8xl mb-6">📅</div>
-                  <h3 className="text-3xl font-black text-gray-900 mb-4">Nenhuma pessoa para exibir</h3>
+                  <h3 className="text-xl font-black text-gray-900 mb-4">Nenhuma pessoa para exibir</h3>
                   <p className="text-xl text-gray-800 font-bold">Vá para a aba "Pessoas" para adicionar funcionários ao sistema.</p>
                 </div>
               )}
 
               {employees.length > 0 && (
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1 shadow-lg rounded-lg overflow-hidden">
                   {weekDays.map(day => (
                     <div key={day} className="p-4 text-center font-black text-gray-900 bg-gray-200 border-4 border-gray-500 text-xl">
                       {day}
@@ -1618,13 +1618,13 @@ const ScheduleApp = () => {
                     }
                     
                     return (
-                      <div key={index} className="border-4 border-gray-500 min-h-[240px]">
-                        <div className={`p-2 text-center text-lg font-black relative border-b-4 ${
-                          holidays[dateToString(day)] 
-                            ? 'bg-gray-500 text-white border-gray-700' 
+                      <div key={index} className="border border-gray-200 min-h-[200px] shadow-sm hover:shadow-md transition-shadow bg-white">
+                        <div className={`p-2 text-center text-sm font-medium relative border-b ${
+                          holidays[dateToString(day)]
+                            ? 'bg-gray-400 text-white border-gray-500'
                             : isOverCapacity 
-                              ? 'bg-red-200 text-red-900 border-red-600' 
-                              : 'bg-gray-100 text-gray-900 border-gray-400'
+                              ? 'bg-red-100 text-red-800 border-red-300' 
+                              : 'bg-gray-50 text-gray-700 border-gray-200'
                         }`}>
                           <div className="flex items-center justify-center gap-2">
                             {day.getDate()}
@@ -1720,7 +1720,7 @@ const ScheduleApp = () => {
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-lg p-3 rounded transition-all border-4 ${borderClass} ${
+                                      className={`text-xs p-2 rounded transition-all border-l-4 ${borderClass} ${
                                         userRole !== 'employee' && emp.type === 'variable'
                                           ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
                                           : 'cursor-default'
@@ -1771,14 +1771,14 @@ const ScheduleApp = () => {
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-lg p-3 rounded transition-all border-4 ${borderClass} ${
+                                      className={`text-xs p-2 rounded transition-all border-l-4 ${borderClass} ${
                                         userRole !== 'employee' && emp.type === 'variable'
                                           ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
                                           : 'cursor-default'
                                       } ${
                                         emp.isManager 
-                                          ? 'bg-blue-200 text-blue-900 border-blue-800 font-black' 
-                                          : 'bg-blue-100 text-blue-800 border-blue-600 font-bold'
+                                          ? 'bg-green-100 text-green-800 border-green-600 font-semibold' 
+                                          : 'bg-green-50 text-green-700 border-green-400 font-medium'
                                       }`}
                                       onClick={() => {
                                         if (userRole !== 'employee' && emp.type === 'variable') {
@@ -1944,7 +1944,7 @@ const ScheduleApp = () => {
                 {employees.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <div className="text-8xl mb-6">👥</div>
-                    <h3 className="text-3xl font-black text-gray-900 mb-4">Nenhuma pessoa cadastrada</h3>
+                    <h3 className="text-xl font-black text-gray-900 mb-4">Nenhuma pessoa cadastrada</h3>
                     <p className="text-xl text-gray-800 mb-8 max-w-md font-bold">
                       Comece adicionando pessoas individualmente ou importe uma lista completa de uma só vez.
                     </p>
@@ -2161,7 +2161,7 @@ const ScheduleApp = () => {
                                                 setEditingPerson(prev => ({ ...(prev || person), name: e.target.value }));
                                                 setHasUnsavedChanges(true);
                                               }}
-                                              className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                                             />
                                           </div>
                                           <div>
@@ -2173,7 +2173,7 @@ const ScheduleApp = () => {
                                                 setEditingPerson(prev => ({ ...(prev || person), team: e.target.value }));
                                                 setHasUnsavedChanges(true);
                                               }}
-                                              className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                                             />
                                           </div>
                                         </div>
@@ -2186,7 +2186,7 @@ const ScheduleApp = () => {
                                               setEditingPerson(prev => ({ ...(prev || person), type: e.target.value }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                                           >
                                             <option value="variable">Presença Variável</option>
                                             <option value="always_office">Sempre Presencial</option>
@@ -2202,7 +2202,7 @@ const ScheduleApp = () => {
                                               setEditingPerson(prev => ({ ...(prev || person), workingHours: e.target.value }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                                           >
                                             {Object.entries(workingHours).map(([key, hours]) => (
                                               <option key={key} value={key}>{hours.label}</option>
@@ -2230,7 +2230,7 @@ const ScheduleApp = () => {
                                         {currentEditData.type === 'variable' && (
                                           <div className="border-t-4 border-gray-400 pt-6 space-y-6">
                                             <div>
-                                              <label className="block text-lg font-black text-gray-900 mb-3">
+                                              <label className="block text-sm font-medium text-gray-700 mb-1">
                                                 Dias presenciais por semana (orientativo)
                                               </label>
                                               <select
@@ -2239,7 +2239,7 @@ const ScheduleApp = () => {
                                                   setEditingPerson(prev => ({ ...(prev || person), officeDays: Number(e.target.value) }));
                                                   setHasUnsavedChanges(true);
                                                 }}
-                                                className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 font-bold text-lg"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
                                               >
                                                 <option value={1}>1 dia</option>
                                                 <option value={2}>2 dias</option>
@@ -2253,7 +2253,7 @@ const ScheduleApp = () => {
                                             </div>
 
                                             <div>
-                                              <label className="block text-lg font-black text-gray-900 mb-3">
+                                              <label className="block text-sm font-medium text-gray-700 mb-1">
                                                 Dias Preferenciais em Home Office
                                               </label>
                                               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -2485,9 +2485,9 @@ const ScheduleApp = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <h4 className="font-black mb-4 text-gray-900 text-xl">Aplicar Template</h4>
-                  <div className="space-y-4 border-4 border-gray-500 rounded-lg p-6">
+                  <div className="space-y-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
                     {Object.entries(templates).map(([key, template]) => (
-                      <div key={key} className="border-4 border-gray-400 rounded-lg p-4">
+                      <div key={key} className="border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white">
                         <div className="flex items-center justify-between mb-3">
                           <h5 className="font-black text-gray-900 text-lg">{template.name}</h5>
                           <div className="flex gap-3">
@@ -2545,7 +2545,7 @@ const ScheduleApp = () => {
                 
                 <div>
                   <h4 className="font-black mb-4 text-gray-900 text-xl">Ações Rápidas</h4>
-                  <div className="space-y-4 border-4 border-gray-500 rounded-lg p-6">
+                  <div className="space-y-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <button
                       onClick={copyPreviousWeek}
                       className="w-full flex items-center gap-3 px-4 py-3 bg-blue-100 text-blue-900 rounded hover:bg-blue-200 border-4 border-blue-500 font-black text-lg"
@@ -2589,7 +2589,7 @@ const ScheduleApp = () => {
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div className="lg:col-span-1">
-                  <label className="block text-lg font-black text-gray-900 mb-3">Modo de Análise</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Modo de Análise</label>
                   <div className="space-y-3">
                     <label className="flex items-center gap-3">
                       <input
@@ -2619,7 +2619,7 @@ const ScheduleApp = () => {
                 <div className="lg:col-span-1">
                   {reportPeriodMode === 'month' ? (
                     <div>
-                      <label className="block text-lg font-black text-gray-900 mb-3">Mês/Ano</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Mês/Ano</label>
                       <input
                         type="month"
                         value={`${selectedReportMonth.getFullYear()}-${String(selectedReportMonth.getMonth() + 1).padStart(2, '0')}`}
@@ -2916,7 +2916,7 @@ const ScheduleApp = () => {
               <div className="bg-gray-100 p-6 rounded-lg border-4 border-gray-400">
                 <h4 className="font-black mb-4 text-gray-900 text-xl">Capacidade e Metas</h4>
                 <div>
-                  <label className="block text-lg font-black text-gray-900 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Capacidade Máxima do Escritório (Indicador Visual)
                   </label>
                   <div className="flex items-center gap-4">
