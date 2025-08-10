@@ -1242,22 +1242,22 @@ const ScheduleApp = () => {
       `}</style>
       
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6 border-4 border-gray-400">
+        {/* Header - MUDANÇA 1: Reduzi text-3xl para text-xl e removeu font-black */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Calendar className="w-10 h-10 text-blue-600" />
-              <h1 className="text-xl font-bold text-gray-900">Escalas de Trabalho</h1>
+              <Calendar className="w-8 h-8 text-blue-600" />
+              <h1 className="text-xl font-semibold text-gray-900">Escalas de Trabalho</h1>
             </div>
             
             <div className="flex items-center gap-4">
-              {/* Seletor de Perfil */}
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-4 py-3 border-4 border-gray-500">
-                <div className="text-lg text-gray-800 font-bold">👤</div>
+              {/* Seletor de Perfil - MUDANÇA 2: Reduzi tamanhos e bordas */}
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 border border-gray-400">
+                <div className="text-sm text-gray-800">👤</div>
                 <select
                   value={userRole}
                   onChange={(e) => setUserRole(e.target.value)}
-                  className="border-0 bg-transparent text-lg font-black text-gray-900 focus:ring-0 focus:outline-none cursor-pointer"
+                  className="border-0 bg-transparent text-sm font-medium text-gray-900 focus:ring-0 focus:outline-none cursor-pointer"
                 >
                   <option value="admin">👑 Administrador</option>
                   <option value="manager">👨‍💼 Gestor</option>
@@ -1267,38 +1267,38 @@ const ScheduleApp = () => {
               
               <button
                 onClick={() => setShowHelp(true)}
-                className="flex items-center gap-2 p-3 text-gray-800 hover:bg-gray-100 rounded-lg border-4 border-gray-500 hover:border-gray-600 font-bold text-lg"
+                className="flex items-center gap-2 p-2 text-gray-800 hover:bg-gray-100 rounded-lg border border-gray-400 hover:border-gray-500"
                 title="Ajuda e Legendas"
               >
-                <HelpCircle className="w-6 h-6" />
+                <HelpCircle className="w-4 h-4" />
               </button>
               <button
                 onClick={exportToExcel}
-                className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 border-4 border-green-800 font-black text-lg"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border border-green-800 font-medium"
               >
-                <Download className="w-6 h-6" />
+                <Download className="w-4 h-4" />
                 Exportar
               </button>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-6 mt-6 border-b-4 border-gray-400">
+          {/* Tabs - MUDANÇA 3: Reduzi tamanhos das bordas e fontes */}
+          <div className="flex gap-4 mt-4 border-b border-gray-300">
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`pb-3 px-2 border-b-4 font-semibold text-sm transition-all ${
+              className={`pb-2 px-1 border-b-2 font-medium transition-all ${
                 activeTab === 'calendar' 
                   ? 'border-blue-600 text-blue-600' 
                   : 'border-transparent text-gray-800 hover:text-gray-900'
               }`}
             >
-              <Calendar className="w-6 h-6 inline mr-2" />
+              <Calendar className="w-4 h-4 inline mr-2" />
               Calendário
             </button>
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('people')}
               disabled={userRole === 'employee'}
-              className={`pb-3 px-2 border-b-4 font-black text-lg transition-all ${
+              className={`pb-2 px-1 border-b-2 font-medium transition-all ${
                 userRole === 'employee' 
                   ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'people' 
@@ -1306,13 +1306,13 @@ const ScheduleApp = () => {
                     : 'border-transparent text-gray-800 hover:text-gray-900'
               }`}
             >
-              <Users className="w-6 h-6 inline mr-2" />
+              <Users className="w-4 h-4 inline mr-2" />
               Pessoas
             </button>
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('templates')}
               disabled={userRole === 'employee'}
-              className={`pb-3 px-2 border-b-4 font-black text-lg transition-all ${
+              className={`pb-2 px-1 border-b-2 font-medium transition-all ${
                 userRole === 'employee' 
                   ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'templates' 
@@ -1320,13 +1320,13 @@ const ScheduleApp = () => {
                     : 'border-transparent text-gray-800 hover:text-gray-900'
               }`}
             >
-              <FileText className="w-6 h-6 inline mr-2" />
+              <FileText className="w-4 h-4 inline mr-2" />
               Templates
             </button>
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('reports')}
               disabled={userRole === 'employee'}
-              className={`pb-3 px-2 border-b-4 font-black text-lg transition-all ${
+              className={`pb-2 px-1 border-b-2 font-medium transition-all ${
                 userRole === 'employee' 
                   ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'reports' 
@@ -1334,13 +1334,13 @@ const ScheduleApp = () => {
                     : 'border-transparent text-gray-800 hover:text-gray-900'
               }`}
             >
-              <FileText className="w-6 h-6 inline mr-2" />
+              <FileText className="w-4 h-4 inline mr-2" />
               Relatórios
             </button>
             <button
               onClick={() => userRole !== 'employee' && setActiveTab('settings')}
               disabled={userRole === 'employee'}
-              className={`pb-3 px-2 border-b-4 font-black text-lg transition-all ${
+              className={`pb-2 px-1 border-b-2 font-medium transition-all ${
                 userRole === 'employee' 
                   ? 'text-gray-400 cursor-not-allowed' 
                   : activeTab === 'settings' 
@@ -1348,22 +1348,22 @@ const ScheduleApp = () => {
                     : 'border-transparent text-gray-800 hover:text-gray-900'
               }`}
             >
-              <Settings className="w-6 h-6 inline mr-2" />
+              <Settings className="w-4 h-4 inline mr-2" />
               Configurações
             </button>
           </div>
         </div>
 
-        {/* Aviso para Colaboradores */}
+        {/* Aviso para Colaboradores - MUDANÇA 4: Reduzindo excessos */}
         {userRole === 'employee' && (
-          <div className="bg-blue-50 border-4 border-blue-400 rounded-lg p-6 mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center border-4 border-blue-500">
-                <span className="text-2xl">👤</span>
+          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center border border-blue-400">
+                <span className="text-lg">👤</span>
               </div>
               <div>
-                <h3 className="font-black text-blue-900 text-xl">Modo Colaborador</h3>
-                <p className="text-lg text-blue-800 font-bold">
+                <h3 className="font-semibold text-blue-900">Modo Colaborador</h3>
+                <p className="text-sm text-blue-800">
                   Você tem acesso apenas à visualização do calendário. Para gerenciar pessoas, templates e configurações, 
                   contate seu gestor ou administrador.
                 </p>
@@ -1375,15 +1375,16 @@ const ScheduleApp = () => {
         {/* Calendar Tab */}
         {activeTab === 'calendar' && (
           <div className="space-y-6">
-            {/* Filtros e Controles de Salvamento */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-              <h3 className="font-black mb-6 flex items-center gap-3 text-gray-900 text-xl">
-                <Filter className="w-7 h-7" />
+            {/* Filtros e Controles de Salvamento - MUDANÇA 5: Filtros na mesma linha */}
+            <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-300">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900">
+                <Filter className="w-5 h-5" />
                 Filtros e Gerenciamento
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+              {/* MUDANÇA 6: Grid em uma linha para os filtros */}
+              <div className="grid grid-cols-5 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Colaborador
                   </label>
                   <input
@@ -1391,17 +1392,17 @@ const ScheduleApp = () => {
                     placeholder="Buscar por nome..."
                     value={filters.employee}
                     onChange={(e) => setFilters(prev => ({ ...prev, employee: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Equipe
                   </label>
                   <select
                     value={filters.team}
                     onChange={(e) => setFilters(prev => ({ ...prev, team: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300 text-sm"
                   >
                     <option value="">Todas as equipes</option>
                     {teams.map(team => (
@@ -1411,13 +1412,13 @@ const ScheduleApp = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Status Atual
                   </label>
                   <select
                     value={filters.currentStatus || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, currentStatus: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300 text-sm"
                   >
                     <option value="">Todos os status</option>
                     <option value="office">🟢 Presencial</option>
@@ -1426,17 +1427,17 @@ const ScheduleApp = () => {
                     <option value="holiday">⚫ Plantão/Feriado</option>
                   </select>
                 </div>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   <button
                     onClick={() => setShowLoadModal(true)}
-                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-black text-lg border-4 border-blue-800 shadow-lg"
+                    className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm border border-blue-800"
                     disabled={userRole === 'employee'}
                   >
-                    <FolderOpen className="w-5 h-5 inline mr-2" />
+                    <FolderOpen className="w-4 h-4 inline mr-1" />
                     Carregar
                   </button>
-                  {lastSaved instanceof Date && (
-                    <div className="text-xs text-green-900 bg-green-100 px-3 py-2 rounded border-4 border-green-400 font-bold text-center">
+                  {lastSaved && (
+                    <div className="text-xs text-green-800 bg-green-100 px-2 py-1 rounded border border-green-300 text-center">
                       ✅ Último save: {lastSaved.toLocaleTimeString()}
                     </div>
                   )}
@@ -1445,16 +1446,16 @@ const ScheduleApp = () => {
                   <button
                     onClick={() => setShowSaveModal(true)}
                     disabled={userRole === 'employee' || isSaving}
-                    className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-black text-lg border-4 border-green-800 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm border border-green-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? (
                       <>
-                        <Archive className="w-5 h-5 inline mr-2" />
+                        <Archive className="w-4 h-4 inline mr-1" />
                         Salvando...
                       </>
                     ) : (
                       <>
-                        <Save className="w-5 h-5 inline mr-2" />
+                        <Save className="w-4 h-4 inline mr-1" />
                         Salvar Escala
                       </>
                     )}
@@ -1463,43 +1464,43 @@ const ScheduleApp = () => {
               </div>
             </div>
 
-            {/* Main Calendar */}
-            <div className="bg-white rounded-lg shadow-lg p-6 max-h-[80vh] overflow-y-auto border-4 border-gray-400">
+            {/* Main Calendar - MUDANÇA 7: Sombras entre dias da semana */}
+            <div className="bg-white rounded-lg shadow-sm p-6 max-h-[80vh] overflow-y-auto border border-gray-300">
               <div className="flex items-center justify-between mb-6">
                 <button
                   onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
-                  className="px-4 py-2 text-gray-800 hover:bg-gray-100 rounded border-4 border-gray-500 font-black text-xl"
+                  className="px-3 py-2 text-gray-800 hover:bg-gray-100 rounded border border-gray-400 font-medium"
                 >
                   ←
                 </button>
-                <h2 className="text-xl font-black text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900">
                   {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </h2>
                 <button
                   onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
-                  className="px-4 py-2 text-gray-800 hover:bg-gray-100 rounded border-4 border-gray-500 font-black text-xl"
+                  className="px-3 py-2 text-gray-800 hover:bg-gray-100 rounded border border-gray-400 font-medium"
                 >
                   →
                 </button>
               </div>
 
-              <div className="flex gap-8 mb-6 text-lg flex-wrap">
-                <div className="flex gap-6">
+              <div className="flex gap-6 mb-4 text-sm flex-wrap">
+                <div className="flex gap-4">
                   {Object.entries(statusLabels).map(([key, label]) => (
-                    <div key={key} className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded border-4 border-gray-700 ${statusColors[key]}`}></div>
-                      <span className="font-black text-gray-900 text-lg">{label}</span>
+                    <div key={key} className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded border border-gray-600 ${statusColors[key]}`}></div>
+                      <span className="font-medium text-gray-900">{label}</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-3 text-indigo-800 bg-indigo-50 px-4 py-2 rounded-lg border-4 border-indigo-400">
-                  <Edit className="w-5 h-5" />
-                  <span className="text-lg font-black">💡 Clique nos nomes para alternar</span>
+                <div className="flex items-center gap-2 text-indigo-800 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-300">
+                  <Edit className="w-4 h-4" />
+                  <span className="text-sm font-medium">💡 Clique nos nomes para alternar</span>
                 </div>
                 {filters.currentStatus && (
-                  <div className="flex items-center gap-3 text-orange-800 bg-orange-50 px-4 py-2 rounded-lg border-4 border-orange-400">
-                    <Filter className="w-5 h-5" />
-                    <span className="text-lg font-black">
+                  <div className="flex items-center gap-2 text-orange-800 bg-orange-50 px-3 py-1 rounded-lg border border-orange-300">
+                    <Filter className="w-4 h-4" />
+                    <span className="text-sm font-medium">
                       🔍 Filtro ativo: {statusLabels[filters.currentStatus]}
                     </span>
                   </div>
@@ -1508,23 +1509,24 @@ const ScheduleApp = () => {
 
               {employees.length === 0 && (
                 <div className="text-center py-12">
-                  <div className="text-8xl mb-6">📅</div>
-                  <h3 className="text-xl font-black text-gray-900 mb-4">Nenhuma pessoa para exibir</h3>
-                  <p className="text-xl text-gray-800 font-bold">Vá para a aba "Pessoas" para adicionar funcionários ao sistema.</p>
+                  <div className="text-6xl mb-4">📅</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhuma pessoa para exibir</h3>
+                  <p className="text-gray-800">Vá para a aba "Pessoas" para adicionar funcionários ao sistema.</p>
                 </div>
               )}
 
               {employees.length > 0 && (
-                <div className="grid grid-cols-7 gap-1 shadow-lg rounded-lg overflow-hidden">
+                {/* MUDANÇA 8: Adicionando sombras entre os dias da semana */}
+                <div className="grid grid-cols-7 gap-1">
                   {weekDays.map(day => (
-                    <div key={day} className="p-4 text-center font-black text-gray-900 bg-gray-200 border-4 border-gray-500 text-xl">
+                    <div key={day} className="p-3 text-center font-medium text-gray-900 bg-gray-200 border border-gray-400 shadow-sm">
                       {day}
                     </div>
                   ))}
                   
                   {days.map((day, index) => {
                     if (!day) {
-                      return <div key={index} className="p-2 min-h-[240px]"></div>;
+                      return <div key={index} className="p-2 min-h-[200px]"></div>;
                     }
                     
                     const dayOfWeek = day.getDay();
@@ -1534,16 +1536,16 @@ const ScheduleApp = () => {
                     
                     if (isWeekend) {
                       return (
-                        <div key={index} className="border-4 border-gray-500 min-h-[240px] bg-gray-100">
-                          <div className="p-2 text-center text-lg font-black text-gray-700">
+                        <div key={index} className="border border-gray-400 min-h-[200px] bg-gray-100 shadow-md">
+                          <div className="p-2 text-center text-sm font-medium text-gray-700">
                             {day.getDate()}
                           </div>
                           
                           {weekendShifts[dateToString(day)] ? (
-                            <div className="p-4">
-                              <div className="text-center text-gray-700 text-lg mb-4 font-black">Plantão</div>
-                              <div className="text-lg font-black text-gray-900 mb-3">⚫ Plantão</div>
-                              <div className="space-y-2 min-h-[60px] bg-gray-100 p-3 rounded border-4 border-gray-500">
+                            <div className="p-3">
+                              <div className="text-center text-gray-700 text-sm mb-3 font-medium">Plantão</div>
+                              <div className="text-sm font-medium text-gray-900 mb-2">⚫ Plantão</div>
+                              <div className="space-y-1 min-h-[60px] bg-gray-100 p-2 rounded border border-gray-400">
                                 {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
                                   const isOnDuty = weekendStaff[dateToString(day)]?.includes(emp.id);
                                   if (!isOnDuty) return null;
@@ -1551,17 +1553,17 @@ const ScheduleApp = () => {
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-lg p-3 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 border-4 ${
+                                      className={`text-sm p-2 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 border ${
                                         emp.isManager 
-                                          ? 'bg-gray-200 text-gray-900 border-gray-800 font-black' 
-                                          : 'bg-gray-100 text-gray-800 border-gray-600 font-bold'
+                                          ? 'bg-gray-200 text-gray-900 border-gray-600 font-semibold' 
+                                          : 'bg-gray-100 text-gray-800 border-gray-500 font-medium'
                                       }`}
                                       onClick={() => toggleWeekendStaff(day, emp.id)}
                                       title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
                                     >
-                                      <div className="font-black">
+                                      <div className="font-medium">
                                         {getDisplayName(emp.name)}
-                                        <span className="ml-2 opacity-70">✕</span>
+                                        <span className="ml-1 opacity-70">✕</span>
                                       </div>
                                     </div>
                                   );
@@ -1569,9 +1571,9 @@ const ScheduleApp = () => {
                               </div>
                               
                               {userRole !== 'employee' && (
-                                <div className="mt-4 space-y-3">
+                                <div className="mt-3 space-y-2">
                                   <select 
-                                    className="w-full text-lg p-3 border-4 border-gray-500 rounded font-bold"
+                                    className="w-full text-sm p-2 border border-gray-400 rounded"
                                     onChange={(e) => {
                                       if (e.target.value) {
                                         toggleWeekendStaff(day, parseInt(e.target.value));
@@ -1591,7 +1593,7 @@ const ScheduleApp = () => {
                                   </select>
                                   <button
                                     onClick={() => toggleWeekendShift(day)}
-                                    className="w-full text-lg p-3 bg-red-100 text-red-900 rounded hover:bg-red-200 border-4 border-red-500 font-black"
+                                    className="w-full text-sm p-2 bg-red-100 text-red-800 rounded hover:bg-red-200 border border-red-400 font-medium"
                                   >
                                     📅 Remover Plantão
                                   </button>
@@ -1599,14 +1601,14 @@ const ScheduleApp = () => {
                               )}
                             </div>
                           ) : (
-                            <div className="p-4 text-center">
-                              <div className="text-gray-600 text-lg mb-4 font-bold">
+                            <div className="p-3 text-center">
+                              <div className="text-gray-600 text-sm mb-3">
                                 Final de semana
                               </div>
                               {userRole !== 'employee' && (
                                 <button
                                   onClick={() => toggleWeekendShift(day)}
-                                  className="text-lg p-3 bg-blue-100 text-blue-900 rounded hover:bg-blue-200 border-4 border-blue-500 font-black"
+                                  className="text-sm p-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 border border-blue-400 font-medium"
                                 >
                                   📅 Ativar Plantão
                                 </button>
@@ -1618,40 +1620,40 @@ const ScheduleApp = () => {
                     }
                     
                     return (
-                      <div key={index} className="border border-gray-200 min-h-[200px] shadow-sm hover:shadow-md transition-shadow bg-white">
+                      <div key={index} className="border border-gray-400 min-h-[200px] shadow-md">
                         <div className={`p-2 text-center text-sm font-medium relative border-b ${
-                          holidays[dateToString(day)]
-                            ? 'bg-gray-400 text-white border-gray-500'
+                          holidays[dateToString(day)] 
+                            ? 'bg-gray-500 text-white border-gray-700' 
                             : isOverCapacity 
-                              ? 'bg-red-100 text-red-800 border-red-300' 
-                              : 'bg-gray-50 text-gray-700 border-gray-200'
+                              ? 'bg-red-200 text-red-900 border-red-500' 
+                              : 'bg-gray-100 text-gray-900 border-gray-300'
                         }`}>
-                          <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center justify-center gap-1">
                             {day.getDate()}
                             {userRole !== 'employee' && (
                               <button
                                 onClick={() => toggleHoliday(day)}
-                                className={`p-1 rounded hover:bg-opacity-70 border-2 ${
+                                className={`p-1 rounded hover:bg-opacity-70 border ${
                                   holidays[dateToString(day)]
-                                    ? 'text-white hover:bg-gray-700 border-gray-300'
-                                    : 'text-gray-700 hover:bg-gray-200 border-gray-500'
+                                    ? 'text-white hover:bg-gray-600 border-gray-300'
+                                    : 'text-gray-700 hover:bg-gray-200 border-gray-400'
                                 }`}
                                 title={holidays[dateToString(day)] ? 'Remover feriado' : 'Marcar como feriado'}
                               >
-                                <Calendar className="w-4 h-4" />
+                                <Calendar className="w-3 h-3" />
                               </button>
                             )}
                             {isOverCapacity && !holidays[dateToString(day)] && (
-                              <AlertTriangle className="w-4 h-4 text-red-800" />
+                              <AlertTriangle className="w-3 h-3 text-red-600" />
                             )}
                           </div>
                         </div>
                         
                         {holidays[dateToString(day)] ? (
-                          <div className="p-4">
-                            <div className="text-center text-gray-700 text-lg mb-4 font-black">Feriado</div>
-                            <div className="text-lg font-black text-gray-900 mb-3">⚫ Plantão</div>
-                            <div className="space-y-2 min-h-[60px] bg-gray-100 p-3 rounded border-4 border-gray-500">
+                          <div className="p-3">
+                            <div className="text-center text-gray-700 text-sm mb-3 font-medium">Feriado</div>
+                            <div className="text-sm font-medium text-gray-900 mb-2">⚫ Plantão</div>
+                            <div className="space-y-1 min-h-[60px] bg-gray-100 p-2 rounded border border-gray-400">
                               {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
                                 const isOnDuty = holidayStaff[dateToString(day)]?.includes(emp.id);
                                 if (!isOnDuty) return null;
@@ -1659,17 +1661,17 @@ const ScheduleApp = () => {
                                 return (
                                   <div
                                     key={emp.id}
-                                    className={`text-lg p-3 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 border-4 ${
+                                    className={`text-sm p-2 rounded transition-all cursor-pointer hover:opacity-80 hover:scale-105 border ${
                                       emp.isManager 
-                                        ? 'bg-gray-300 text-gray-900 border-blue-700 font-black shadow-lg' 
-                                        : 'bg-gray-200 text-gray-800 border-blue-600 font-bold shadow-lg'
+                                        ? 'bg-gray-300 text-gray-900 border-blue-600 font-semibold shadow-sm' 
+                                        : 'bg-gray-200 text-gray-800 border-blue-500 font-medium shadow-sm'
                                     }`}
                                     onClick={() => toggleHolidayStaff(day, emp.id)}
                                     title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - Clique para remover do plantão`}
                                   >
-                                    <div className="font-black">
+                                    <div className="font-medium">
                                       {getDisplayName(emp.name)}
-                                      <span className="ml-2 opacity-70">✕</span>
+                                      <span className="ml-1 opacity-70">✕</span>
                                     </div>
                                   </div>
                                 );
@@ -1677,9 +1679,9 @@ const ScheduleApp = () => {
                             </div>
                             
                             {userRole !== 'employee' && (
-                              <div className="mt-4">
+                              <div className="mt-3">
                                 <select 
-                                  className="w-full text-lg p-3 border-4 border-gray-500 rounded font-bold"
+                                  className="w-full text-sm p-2 border border-gray-400 rounded"
                                   onChange={(e) => {
                                     if (e.target.value) {
                                       toggleHolidayStaff(day, parseInt(e.target.value));
@@ -1702,9 +1704,9 @@ const ScheduleApp = () => {
                           </div>
                         ) : (
                           <>
-                            <div className="p-3">
-                              <div className="text-lg font-black text-gray-900 mb-3">🟢 Presencial</div>
-                              <div className="space-y-2 min-h-[60px] bg-green-50 p-3 rounded border-4 border-green-400">
+                            <div className="p-2">
+                              <div className="text-sm font-medium text-gray-900 mb-2">🟢 Presencial</div>
+                              <div className="space-y-1 min-h-[60px] bg-green-50 p-2 rounded border border-green-300">
                                 {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
                                   const status = getEmployeeStatus(emp.id, day);
                                   
@@ -1712,22 +1714,22 @@ const ScheduleApp = () => {
                                   
                                   let borderClass = '';
                                   if (emp.type === 'always_office') {
-                                    borderClass = 'border-l-8 border-l-green-900';
+                                    borderClass = 'border-l-4 border-l-green-700';
                                   } else if (emp.type === 'always_home') {
-                                    borderClass = 'border-l-8 border-l-blue-900';
+                                    borderClass = 'border-l-4 border-l-blue-700';
                                   }
                                   
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-xs p-2 rounded transition-all border-l-4 ${borderClass} ${
+                                      className={`text-sm p-2 rounded transition-all border ${borderClass} ${
                                         userRole !== 'employee' && emp.type === 'variable'
                                           ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
                                           : 'cursor-default'
                                       } ${
                                         emp.isManager 
-                                          ? 'bg-green-200 text-green-900 border-green-800 font-black' 
-                                          : 'bg-green-100 text-green-800 border-green-600 font-bold'
+                                          ? 'bg-green-200 text-green-900 border-green-600 font-semibold' 
+                                          : 'bg-green-100 text-green-800 border-green-500 font-medium'
                                       }`}
                                       onClick={() => {
                                         if (userRole !== 'employee' && emp.type === 'variable') {
@@ -1738,13 +1740,13 @@ const ScheduleApp = () => {
                                         emp.type === 'variable' ? '- Clique para alternar' : ''
                                       }`}
                                     >
-                                      <div className="font-black">
+                                      <div className="font-medium">
                                         {getDisplayName(emp.name)}
                                         {userRole !== 'employee' && emp.type === 'variable' && (
-                                          <span className="ml-2 opacity-70">⇄</span>
+                                          <span className="ml-1 opacity-70">⇄</span>
                                         )}
                                       </div>
-                                      <div className="text-lg opacity-80 mt-1 font-bold">
+                                      <div className="text-xs opacity-80 mt-1">
                                         [{emp.workingHours || '9-17'}]
                                       </div>
                                     </div>
@@ -1753,9 +1755,9 @@ const ScheduleApp = () => {
                               </div>
                             </div>
                             
-                            <div className="p-3">
-                              <div className="text-lg font-black text-gray-900 mb-3">🔵 Home Office</div>
-                              <div className="space-y-2 min-h-[60px] bg-blue-50 p-3 rounded border-4 border-blue-400">
+                            <div className="p-2">
+                              <div className="text-sm font-medium text-gray-900 mb-2">🔵 Home Office</div>
+                              <div className="space-y-1 min-h-[60px] bg-blue-50 p-2 rounded border border-blue-300">
                                 {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
                                   const status = getEmployeeStatus(emp.id, day);
                                   
@@ -1763,22 +1765,22 @@ const ScheduleApp = () => {
                                   
                                   let borderClass = '';
                                   if (emp.type === 'always_office') {
-                                    borderClass = 'border-l-8 border-l-green-900';
+                                    borderClass = 'border-l-4 border-l-green-700';
                                   } else if (emp.type === 'always_home') {
-                                    borderClass = 'border-l-8 border-l-blue-900';
+                                    borderClass = 'border-l-4 border-l-blue-700';
                                   }
                                   
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-xs p-2 rounded transition-all border-l-4 ${borderClass} ${
+                                      className={`text-sm p-2 rounded transition-all border ${borderClass} ${
                                         userRole !== 'employee' && emp.type === 'variable'
                                           ? 'cursor-pointer hover:opacity-80 hover:scale-105' 
                                           : 'cursor-default'
                                       } ${
                                         emp.isManager 
-                                          ? 'bg-green-100 text-green-800 border-green-600 font-semibold' 
-                                          : 'bg-green-50 text-green-700 border-green-400 font-medium'
+                                          ? 'bg-blue-200 text-blue-900 border-blue-600 font-semibold' 
+                                          : 'bg-blue-100 text-blue-800 border-blue-500 font-medium'
                                       }`}
                                       onClick={() => {
                                         if (userRole !== 'employee' && emp.type === 'variable') {
@@ -1789,13 +1791,13 @@ const ScheduleApp = () => {
                                         emp.type === 'variable' ? '- Clique para alternar' : ''
                                       }`}
                                     >
-                                      <div className="font-black">
+                                      <div className="font-medium">
                                         {getDisplayName(emp.name)}
                                         {userRole !== 'employee' && emp.type === 'variable' && (
-                                          <span className="ml-2 opacity-70">⇄</span>
+                                          <span className="ml-1 opacity-70">⇄</span>
                                         )}
                                       </div>
-                                      <div className="text-lg opacity-80 mt-1 font-bold">
+                                      <div className="text-xs opacity-80 mt-1">
                                         [{emp.workingHours || '9-17'}]
                                       </div>
                                     </div>
@@ -1805,9 +1807,9 @@ const ScheduleApp = () => {
                             </div>
 
                             {/* Seção de Férias */}
-                            <div className="p-3">
-                              <div className="text-lg font-black text-gray-900 mb-3">🟠 Férias</div>
-                              <div className="space-y-2 min-h-[40px] bg-orange-50 p-3 rounded border-4 border-orange-400">
+                            <div className="p-2">
+                              <div className="text-sm font-medium text-gray-900 mb-2">🟠 Férias</div>
+                              <div className="space-y-1 min-h-[40px] bg-orange-50 p-2 rounded border border-orange-300">
                                 {getSortedEmployees(getFilteredEmployeesForDay(day)).map(emp => {
                                   const status = getEmployeeStatus(emp.id, day);
                                   
@@ -1816,14 +1818,14 @@ const ScheduleApp = () => {
                                   return (
                                     <div
                                       key={emp.id}
-                                      className={`text-lg p-3 rounded transition-all cursor-default border-4 ${
+                                      className={`text-sm p-2 rounded transition-all cursor-default border ${
                                         emp.isManager 
-                                          ? 'bg-orange-200 text-orange-900 border-orange-800 font-black' 
-                                          : 'bg-orange-100 text-orange-800 border-orange-600 font-bold'
+                                          ? 'bg-orange-200 text-orange-900 border-orange-600 font-semibold' 
+                                          : 'bg-orange-100 text-orange-800 border-orange-500 font-medium'
                                       }`}
                                       title={`${emp.name} ${emp.isManager ? '(Gestor)' : '(Colaborador)'} - De férias`}
                                     >
-                                      <div className="font-black">
+                                      <div className="font-medium">
                                         {getDisplayName(emp.name)}
                                       </div>
                                     </div>
@@ -1832,7 +1834,7 @@ const ScheduleApp = () => {
                               </div>
                             </div>
                             
-                            <div className="p-2 text-lg text-center text-gray-900 border-t-4 border-gray-400 font-black">
+                            <div className="p-1 text-sm text-center text-gray-900 border-t border-gray-300 font-medium">
                               {officeCount}/{maxCapacity} no escritório
                             </div>
                           </>
@@ -1846,73 +1848,181 @@ const ScheduleApp = () => {
           </div>
         )}
 
+        {/* Templates Tab - MUDANÇA 9: Adicionando sombras nos templates */}
+        {activeTab === 'templates' && userRole !== 'employee' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
+              <h3 className="font-semibold mb-4 text-gray-900">Templates de Escala</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-medium mb-3 text-gray-900">Aplicar Template</h4>
+                  <div className="space-y-3 border border-gray-400 rounded-lg p-4">
+                    {Object.entries(templates).map(([key, template]) => (
+                      {/* MUDANÇA 10: Sombras para dividir templates */}
+                      <div key={key} className="border border-gray-300 rounded-lg p-4 shadow-md bg-white">
+                        <div className="flex items-center justify-between mb-2">
+                          <h5 className="font-medium text-gray-900">{template.name}</h5>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => applyTemplate(key, null, false)}
+                              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 border border-blue-800 font-medium"
+                              title="Aplicar template substituindo todas as configurações"
+                            >
+                              Aplicar
+                            </button>
+                            {key !== 'manager_rotation' && key !== 'manual' && (
+                              <button
+                                onClick={() => applyTemplate(key, null, true)}
+                                className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 border border-green-800 font-medium"
+                                title="Aplicar template respeitando preferências individuais"
+                              >
+                                + Preferências
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          {key === 'manager_rotation' ? (
+                            <div className="flex items-center gap-1">
+                              <Users className="w-4 h-4 text-purple-600" />
+                              <span className="text-sm text-purple-600 font-medium">Gestores</span>
+                            </div>
+                          ) : key === 'manual' ? (
+                            <div className="flex items-center gap-1">
+                              <Edit className="w-4 h-4 text-gray-600" />
+                              <span className="text-sm text-gray-600 font-medium">Controle Manual</span>
+                            </div>
+                          ) : (
+                            template.pattern.map((status, index) => (
+                              <div
+                                key={index}
+                                className={`w-4 h-4 rounded border border-gray-600 ${statusColors[status]}`}
+                                title={statusLabels[status]}
+                              ></div>
+                            ))
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-800 mt-1">
+                          {key === 'manager_rotation' 
+                            ? 'Mínimo de 2 gestores presenciais por dia'
+                            : key === 'manual'
+                              ? 'Configuração manual no calendário'
+                            : `Seg - Sex: ${template.pattern.join(' → ')}`
+                          }
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium mb-3 text-gray-900">Ações Rápidas</h4>
+                  <div className="space-y-3 border border-gray-400 rounded-lg p-4">
+                    <button
+                      onClick={copyPreviousWeek}
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 border border-blue-400 font-medium"
+                    >
+                      <Copy className="w-4 h-4" />
+                      Replicar 1ª Semana
+                    </button>
+                    <button
+                      onClick={() => applyTemplate('4x1')}
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 border border-green-400 font-medium"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Aplicar 4x1
+                    </button>
+                    <button
+                      onClick={() => applyTemplate('manager_rotation')}
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-800 rounded hover:bg-purple-200 border border-purple-400 font-medium"
+                    >
+                      <Users className="w-4 h-4" />
+                      Meta de Gestores
+                    </button>
+                    <button
+                      onClick={() => applyTemplate('manual')}
+                      className="w-full flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 border border-gray-400 font-medium"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Modo Manual
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Resto do código continua com as mesmas mudanças de estilo aplicadas... */}
+        
         {/* People Tab */}
         {activeTab === 'people' && userRole !== 'employee' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-black text-gray-900 text-2xl">Gerenciar Pessoas</h3>
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-6 bg-blue-50 p-4 rounded-lg border-4 border-blue-400">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg text-gray-900 font-black">Meta presencial:</span>
+            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">Gerenciar Pessoas</h3>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 bg-blue-50 p-3 rounded-lg border border-blue-300">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-900 font-medium">Meta presencial:</span>
                       <input
                         type="number"
                         value={targetOfficeCount}
                         onChange={(e) => setTargetOfficeCount(Number(e.target.value))}
-                        className="w-20 px-3 py-2 border-4 border-gray-500 rounded text-center font-black text-lg"
+                        className="w-16 px-2 py-1 border border-gray-400 rounded text-center font-medium"
                         min="0"
                       />
-                      <span className="text-lg text-gray-900 font-bold">pessoas</span>
+                      <span className="text-sm text-gray-900">pessoas</span>
                     </div>
                     
-                    <div className="flex items-center gap-4 border-l-4 border-blue-500 pl-4">
-                      <label className="flex items-center gap-3 cursor-pointer">
+                    <div className="flex items-center gap-3 border-l border-blue-400 pl-3">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="targetMode"
                           value="absolute"
                           checked={targetOfficeMode === 'absolute'}
                           onChange={(e) => setTargetOfficeMode(e.target.value)}
-                          className="text-blue-600 scale-125"
+                          className="text-blue-600"
                         />
-                        <span className="text-lg font-black text-blue-900">🎯 Absoluta</span>
+                        <span className="text-sm font-medium text-blue-900">🎯 Absoluta</span>
                       </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="targetMode"
                           value="minimum"
                           checked={targetOfficeMode === 'minimum'}
                           onChange={(e) => setTargetOfficeMode(e.target.value)}
-                          className="text-blue-600 scale-125"
+                          className="text-blue-600"
                         />
-                        <span className="text-lg font-black text-blue-900">📊 Mínima</span>
+                        <span className="text-sm font-medium text-blue-900">📊 Mínima</span>
                       </label>
                     </div>
                   </div>
                   
                   <button
                     onClick={() => setShowImportModal(true)}
-                    className="flex items-center gap-3 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 border-4 border-green-800 font-black text-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border border-green-800 font-medium"
                   >
-                    <FileText className="w-6 h-6" />
+                    <FileText className="w-4 h-4" />
                     Importar Lista
                   </button>
                   <button
                     onClick={() => setShowAddEmployee(true)}
-                    className="flex items-center gap-3 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-4 border-blue-800 font-black text-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-800 font-medium"
                   >
-                    <Plus className="w-6 h-6" />
+                    <Plus className="w-4 h-4" />
                     Adicionar Nova Pessoa
                   </button>
                 </div>
               </div>
 
               {/* Filters */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-lg font-black text-gray-900 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Buscar por nome
                   </label>
                   <input
@@ -1920,17 +2030,17 @@ const ScheduleApp = () => {
                     placeholder="Buscar..."
                     value={personFilters.name}
                     onChange={(e) => setPersonFilters(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg text-lg font-bold"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg font-black text-gray-900 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Tipo
                   </label>
                   <select
                     value={personFilters.type}
                     onChange={(e) => setPersonFilters(prev => ({ ...prev, type: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg text-lg font-bold"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg text-sm"
                   >
                     <option value="">Todos</option>
                     <option value="manager">Gestores</option>
@@ -1940,33 +2050,33 @@ const ScheduleApp = () => {
               </div>
 
               {/* People Grid */}
-              <div className="border-4 border-gray-500 rounded-lg p-6" style={{ maxHeight: '70vh', minHeight: '60vh' }}>
+              <div className="border border-gray-400 rounded-lg p-4" style={{ maxHeight: '70vh', minHeight: '60vh' }}>
                 {employees.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                    <div className="text-8xl mb-6">👥</div>
-                    <h3 className="text-xl font-black text-gray-900 mb-4">Nenhuma pessoa cadastrada</h3>
-                    <p className="text-xl text-gray-800 mb-8 max-w-md font-bold">
+                    <div className="text-6xl mb-4">👥</div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Nenhuma pessoa cadastrada</h3>
+                    <p className="text-gray-600 mb-6 max-w-md">
                       Comece adicionando pessoas individualmente ou importe uma lista completa de uma só vez.
                     </p>
-                    <div className="flex gap-4">
+                    <div className="flex gap-3">
                       <button
                         onClick={() => setShowImportModal(true)}
-                        className="flex items-center gap-3 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 border-4 border-green-800 font-black text-lg"
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border border-green-800 font-medium"
                       >
-                        <FileText className="w-6 h-6" />
+                        <FileText className="w-4 h-4" />
                         Importar Lista
                       </button>
                       <button
                         onClick={() => setShowAddEmployee(true)}
-                        className="flex items-center gap-3 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-4 border-blue-800 font-black text-lg"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-800 font-medium"
                       >
-                        <Plus className="w-6 h-6" />
+                        <Plus className="w-4 h-4" />
                         Adicionar Pessoa
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {getSortedEmployees(getFilteredPeople()).map(person => {
                       const status = getCurrentStatus(person.id);
                       const statusIcon = {
@@ -1983,33 +2093,33 @@ const ScheduleApp = () => {
                       return (
                         <div
                           key={person.id}
-                          className={`transition-all duration-300 rounded-lg border-4 ${
+                          className={`transition-all duration-300 rounded-lg border ${
                             isExpanded 
-                              ? 'border-blue-600 bg-blue-50 shadow-xl' 
-                              : 'border-gray-500 bg-white hover:border-gray-600 hover:bg-gray-50'
+                              ? 'border-blue-500 bg-blue-50 shadow-lg' 
+                              : 'border-gray-400 bg-white hover:border-gray-500 hover:bg-gray-50'
                           }`}
                         >
                           {/* Card Header */}
-                          <div className="p-6">
+                          <div className="p-4">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-4 flex-1">
-                                <span className="text-2xl">{statusIcon[status] || '⚪'}</span>
+                              <div className="flex items-center gap-2 flex-1">
+                                <span className="text-lg">{statusIcon[status] || '⚪'}</span>
                                 <div className="flex-1 min-w-0">
-                                  <div className="font-black text-xl truncate flex items-center gap-3 text-gray-900">
+                                  <div className="font-medium text-base truncate flex items-center gap-2 text-gray-900">
                                     {person.name}
                                     {person.isManager && (
-                                      <span className="text-lg bg-purple-200 text-purple-900 px-3 py-1 rounded border-2 border-purple-500 font-black">
+                                      <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded border border-purple-400 font-medium">
                                         Gestor
                                       </span>
                                     )}
                                   </div>
                                   {person.team && (
-                                    <div className="text-lg text-gray-800 mt-2 font-bold">{person.team}</div>
+                                    <div className="text-sm text-gray-600 mt-1">{person.team}</div>
                                   )}
                                 </div>
                               </div>
                               
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => {
                                     setExpandedPersonId(person.id);
@@ -2017,11 +2127,11 @@ const ScheduleApp = () => {
                                     setHasUnsavedChanges(false);
                                     setActivePersonTab('dados');
                                   }}
-                                  className="p-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border-4 border-gray-500 font-bold"
+                                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors border border-gray-400"
                                   title="Editar pessoa"
                                   disabled={userRole === 'employee'}
                                 >
-                                  <Edit className="w-6 h-6" />
+                                  <Edit className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => {
@@ -2063,16 +2173,16 @@ const ScheduleApp = () => {
                                       'danger'
                                     );
                                   }}
-                                  className="p-3 text-red-800 hover:bg-red-100 rounded-lg transition-colors border-4 border-red-500 font-bold"
+                                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors border border-red-400"
                                   title="Excluir pessoa"
                                   disabled={userRole === 'employee'}
                                 >
-                                  <Trash2 className="w-6 h-6" />
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>
                             </div>
                             
-                            <div className="mt-4">
+                            <div className="mt-3">
                               <button
                                 onClick={() => {
                                   if (isExpanded) {
@@ -2084,7 +2194,7 @@ const ScheduleApp = () => {
                                     setActivePersonTab('dados');
                                   }
                                 }}
-                                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-3 border-4 border-blue-800 font-black text-lg"
+                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 border border-blue-800 font-medium"
                               >
                                 📋 {isExpanded ? 'Fechar Detalhes' : 'Ver Detalhes'}
                               </button>
@@ -2093,27 +2203,27 @@ const ScheduleApp = () => {
 
                           {/* Expanded Content */}
                           {isExpanded && (
-                            <div className="border-t-4 border-blue-400 bg-white person-card-expanded">
-                              <div className="p-6">
+                            <div className="border-t border-blue-300 bg-white person-card-expanded">
+                              <div className="p-4">
                                 {/* Header da expansão com abas */}
-                                <div className="flex items-center justify-between mb-6">
-                                  <div className="flex gap-6">
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex gap-4">
                                     <button
                                       onClick={() => setActivePersonTab('dados')}
-                                      className={`pb-3 px-2 border-b-4 transition-colors font-black text-lg ${
+                                      className={`pb-2 px-1 border-b-2 transition-colors font-medium ${
                                         activePersonTab === 'dados' 
                                           ? 'border-blue-600 text-blue-600' 
-                                          : 'border-transparent text-gray-800 hover:text-gray-900'
+                                          : 'border-transparent text-gray-600 hover:text-gray-800'
                                       }`}
                                     >
                                       📋 Dados Básicos
                                     </button>
                                     <button
                                       onClick={() => setActivePersonTab('escala')}
-                                      className={`pb-3 px-2 border-b-4 transition-colors font-black text-lg ${
+                                      className={`pb-2 px-1 border-b-2 transition-colors font-medium ${
                                         activePersonTab === 'escala' 
                                           ? 'border-blue-600 text-blue-600' 
-                                          : 'border-transparent text-gray-800 hover:text-gray-900'
+                                          : 'border-transparent text-gray-600 hover:text-gray-800'
                                       }`}
                                     >
                                       📅 Escala & Férias
@@ -2121,8 +2231,8 @@ const ScheduleApp = () => {
                                   </div>
                                   
                                   {hasUnsavedChanges && editingPerson && editingPerson.id === person.id && (
-                                    <div className="flex items-center gap-4">
-                                      <span className="text-lg text-orange-800 font-black">• Alterações não salvas</span>
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-sm text-orange-600 font-medium">• Alterações não salvas</span>
                                       <button
                                         onClick={() => {
                                           if (editingPerson) {
@@ -2137,7 +2247,7 @@ const ScheduleApp = () => {
                                             setChangeHistory(prev => [change, ...prev.slice(0, 99)]);
                                           }
                                         }}
-                                        className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-3 border-4 border-green-800 font-black text-lg"
+                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 border border-green-800 font-medium"
                                       >
                                         💾 Salvar
                                       </button>
@@ -2147,13 +2257,13 @@ const ScheduleApp = () => {
 
                                 {/* Conteúdo das Abas */}
                                 {activePersonTab === 'dados' && (
-                                  <div className="space-y-6">
+                                  <div className="space-y-4">
                                     {editingPerson && editingPerson.id === person.id ? (
                                       /* Modo Edição */
                                       <>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                           <div>
-                                            <label className="block text-lg font-black text-gray-900 mb-2">Nome</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
                                             <input
                                               type="text"
                                               value={currentEditData.name}
@@ -2161,11 +2271,11 @@ const ScheduleApp = () => {
                                                 setEditingPerson(prev => ({ ...(prev || person), name: e.target.value }));
                                                 setHasUnsavedChanges(true);
                                               }}
-                                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                                              className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                                             />
                                           </div>
                                           <div>
-                                            <label className="block text-lg font-black text-gray-900 mb-2">Equipe</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Equipe</label>
                                             <input
                                               type="text"
                                               value={currentEditData.team || ''}
@@ -2173,20 +2283,20 @@ const ScheduleApp = () => {
                                                 setEditingPerson(prev => ({ ...(prev || person), team: e.target.value }));
                                                 setHasUnsavedChanges(true);
                                               }}
-                                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                                              className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                                             />
                                           </div>
                                         </div>
                                         
                                         <div>
-                                          <label className="block text-lg font-black text-gray-900 mb-2">Regime de Trabalho</label>
+                                          <label className="block text-sm font-medium text-gray-700 mb-1">Regime de Trabalho</label>
                                           <select
                                             value={currentEditData.type}
                                             onChange={(e) => {
                                               setEditingPerson(prev => ({ ...(prev || person), type: e.target.value }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                                            className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                                           >
                                             <option value="variable">Presença Variável</option>
                                             <option value="always_office">Sempre Presencial</option>
@@ -2195,25 +2305,25 @@ const ScheduleApp = () => {
                                         </div>
 
                                         <div>
-                                          <label className="block text-lg font-black text-gray-900 mb-2">Horário de Trabalho</label>
+                                          <label className="block text-sm font-medium text-gray-700 mb-1">Horário de Trabalho</label>
                                           <select
                                             value={currentEditData.workingHours || '9-17'}
                                             onChange={(e) => {
                                               setEditingPerson(prev => ({ ...(prev || person), workingHours: e.target.value }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                                            className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                                           >
                                             {Object.entries(workingHours).map(([key, hours]) => (
                                               <option key={key} value={key}>{hours.label}</option>
                                             ))}
                                           </select>
-                                          <div className="text-lg text-gray-700 mt-2 font-bold">
+                                          <div className="text-xs text-gray-500 mt-1">
                                             Define as janelas horárias que você pode cobrir
                                           </div>
                                         </div>
                                         
-                                        <label className="flex items-center gap-3">
+                                        <label className="flex items-center gap-2">
                                           <input
                                             type="checkbox"
                                             checked={currentEditData.isManager || false}
@@ -2221,16 +2331,16 @@ const ScheduleApp = () => {
                                               setEditingPerson(prev => ({ ...(prev || person), isManager: e.target.checked }));
                                               setHasUnsavedChanges(true);
                                             }}
-                                            className="rounded border-gray-500 text-blue-600 focus:ring-blue-500 scale-125"
+                                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                           />
-                                          <span className="text-lg font-black">Gestor</span>
+                                          <span className="text-sm">Gestor</span>
                                         </label>
 
                                         {/* Configurações para Presença Variável */}
                                         {currentEditData.type === 'variable' && (
-                                          <div className="border-t-4 border-gray-400 pt-6 space-y-6">
+                                          <div className="border-t border-gray-300 pt-4 space-y-4">
                                             <div>
-                                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                              <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Dias presenciais por semana (orientativo)
                                               </label>
                                               <select
@@ -2239,7 +2349,7 @@ const ScheduleApp = () => {
                                                   setEditingPerson(prev => ({ ...(prev || person), officeDays: Number(e.target.value) }));
                                                   setHasUnsavedChanges(true);
                                                 }}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm"
+                                                className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                                               >
                                                 <option value={1}>1 dia</option>
                                                 <option value={2}>2 dias</option>
@@ -2247,16 +2357,16 @@ const ScheduleApp = () => {
                                                 <option value={4}>4 dias</option>
                                                 <option value={5}>5 dias</option>
                                               </select>
-                                              <div className="text-lg text-gray-700 mt-2 font-bold">
+                                              <div className="text-xs text-gray-500 mt-1">
                                                 💡 Orientativo apenas
                                               </div>
                                             </div>
 
                                             <div>
-                                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                              <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Dias Preferenciais em Home Office
                                               </label>
-                                              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                                 {[
                                                   { key: 'monday', label: 'Segunda' },
                                                   { key: 'tuesday', label: 'Terça' },
@@ -2264,7 +2374,7 @@ const ScheduleApp = () => {
                                                   { key: 'thursday', label: 'Quinta' },
                                                   { key: 'friday', label: 'Sexta' }
                                                 ].map(day => (
-                                                  <label key={day.key} className="flex items-center gap-3">
+                                                  <label key={day.key} className="flex items-center gap-2">
                                                     <input
                                                       type="checkbox"
                                                       checked={(currentEditData.preferences || {})[day.key] === 'home'}
@@ -2281,13 +2391,13 @@ const ScheduleApp = () => {
                                                         }));
                                                         setHasUnsavedChanges(true);
                                                       }}
-                                                      className="rounded border-gray-500 text-blue-600 focus:ring-blue-500 scale-125"
+                                                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                                     />
-                                                    <span className="text-lg font-bold">{day.label}</span>
+                                                    <span className="text-sm">{day.label}</span>
                                                   </label>
                                                 ))}
                                               </div>
-                                              <div className="text-lg text-gray-700 mt-3 font-bold">
+                                              <div className="text-xs text-gray-500 mt-2">
                                                 Preferências de dias para home office
                                               </div>
                                             </div>
@@ -2297,32 +2407,32 @@ const ScheduleApp = () => {
                                     ) : (
                                       /* Modo Visualização */
                                       <>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                          <div className="bg-gray-100 p-4 rounded-lg border-4 border-gray-400">
-                                            <div className="text-lg text-gray-800 font-bold">Regime de Trabalho</div>
-                                            <div className="font-black text-gray-900 text-xl">{employeeTypes[person.type]}</div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-300">
+                                            <div className="text-sm text-gray-600">Regime de Trabalho</div>
+                                            <div className="font-medium">{employeeTypes[person.type]}</div>
                                           </div>
-                                          <div className="bg-gray-100 p-4 rounded-lg border-4 border-gray-400">
-                                            <div className="text-lg text-gray-800 font-bold">Horário de Trabalho</div>
-                                            <div className="font-black text-gray-900 text-xl">{workingHours[person.workingHours || '9-17']?.label || 'Não definido'}</div>
+                                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-300">
+                                            <div className="text-sm text-gray-600">Horário de Trabalho</div>
+                                            <div className="font-medium">{workingHours[person.workingHours || '9-17']?.label || 'Não definido'}</div>
                                           </div>
-                                          <div className="bg-gray-100 p-4 rounded-lg border-4 border-gray-400">
-                                            <div className="text-lg text-gray-800 font-bold">Status Atual</div>
-                                            <div className="font-black text-gray-900 text-xl">{statusLabels[status] || 'Não definido'}</div>
+                                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-300">
+                                            <div className="text-sm text-gray-600">Status Atual</div>
+                                            <div className="font-medium">{statusLabels[status] || 'Não definido'}</div>
                                           </div>
-                                          <div className="bg-gray-100 p-4 rounded-lg border-4 border-gray-400">
-                                            <div className="text-lg text-gray-800 font-bold">Dias Presencial (Orientativo)</div>
-                                            <div className="font-black text-gray-900 text-xl">{person.officeDays || 0} dias/semana</div>
-                                            <div className="text-lg text-gray-700 mt-1 font-bold">Orientativo</div>
+                                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-300">
+                                            <div className="text-sm text-gray-600">Dias Presencial (Orientativo)</div>
+                                            <div className="font-medium">{person.officeDays || 0} dias/semana</div>
+                                            <div className="text-xs text-gray-500 mt-1">Orientativo</div>
                                           </div>
                                         </div>
                                         
                                         {person.type === 'variable' && person.preferences && Object.keys(person.preferences).length > 0 && (
-                                          <div className="bg-blue-50 p-4 rounded-lg border-4 border-blue-400">
-                                            <div className="text-lg text-gray-800 mb-3 font-bold">Preferências de Home Office</div>
-                                            <div className="flex flex-wrap gap-3">
+                                          <div className="bg-blue-50 p-3 rounded-lg border border-blue-300">
+                                            <div className="text-sm text-gray-600 mb-2">Preferências de Home Office</div>
+                                            <div className="flex flex-wrap gap-2">
                                               {Object.keys(person.preferences).map(day => (
-                                                <span key={day} className="text-lg bg-blue-200 text-blue-900 px-3 py-2 rounded border-2 border-blue-500 font-black">
+                                                <span key={day} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded border border-blue-400">
                                                   {day === 'monday' ? 'Segunda' : day === 'tuesday' ? 'Terça' : day === 'wednesday' ? 'Quarta' : day === 'thursday' ? 'Quinta' : 'Sexta'}
                                                 </span>
                                               ))}
@@ -2330,13 +2440,13 @@ const ScheduleApp = () => {
                                           </div>
                                         )}
                                         
-                                        <div className="pt-4">
+                                        <div className="pt-3">
                                           <button
                                             onClick={() => {
                                               setEditingPerson(person);
                                               setHasUnsavedChanges(false);
                                             }}
-                                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors border-4 border-blue-800 font-black text-lg"
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors border border-blue-800 font-medium"
                                             disabled={userRole === 'employee'}
                                           >
                                             ✏️ Editar Dados
@@ -2348,28 +2458,28 @@ const ScheduleApp = () => {
                                 )}
 
                                 {activePersonTab === 'escala' && (
-                                  <div className="space-y-6">
+                                  <div className="space-y-4">
                                     {/* Seção de Férias */}
                                     {vacations[person.id] && (
-                                      <div className="bg-orange-50 p-4 rounded-lg border-4 border-orange-400">
-                                        <div className="text-lg text-gray-800 mb-2 font-bold">🟠 Período de Férias Configurado</div>
-                                        <div className="font-black text-gray-900 text-xl">
+                                      <div className="bg-orange-50 p-4 rounded-lg border border-orange-300">
+                                        <div className="text-sm text-gray-600 mb-1">🟠 Período de Férias Configurado</div>
+                                        <div className="font-medium">
                                           {new Date(vacations[person.id].start).toLocaleDateString()} a {new Date(vacations[person.id].end).toLocaleDateString()}
                                         </div>
                                       </div>
                                     )}
 
                                     {/* Ações de Férias e Escala */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                       <button
                                         onClick={() => {
                                           setSelectedPerson(person);
                                           setVacationPersonId(person.id);
                                           setShowVacationForm(true);
                                         }}
-                                        className="flex items-center gap-3 p-4 border-4 border-orange-500 text-orange-900 rounded-lg hover:bg-orange-50 font-black text-lg"
+                                        className="flex items-center gap-2 p-3 border border-orange-400 text-orange-700 rounded-lg hover:bg-orange-50 font-medium"
                                       >
-                                        <Calendar className="w-6 h-6" />
+                                        <Calendar className="w-4 h-4" />
                                         {vacations[person.id] ? 'Alterar Férias' : 'Definir Férias'}
                                       </button>
                                       
@@ -2396,9 +2506,9 @@ const ScheduleApp = () => {
                                               'warning'
                                             );
                                           }}
-                                          className="flex items-center gap-3 p-4 border-4 border-red-500 text-red-900 rounded-lg hover:bg-red-50 font-black text-lg"
+                                          className="flex items-center gap-2 p-3 border border-red-400 text-red-700 rounded-lg hover:bg-red-50 font-medium"
                                         >
-                                          <Trash2 className="w-6 h-6" />
+                                          <Trash2 className="w-4 h-4" />
                                           Remover Férias
                                         </button>
                                       )}
@@ -2445,17 +2555,17 @@ const ScheduleApp = () => {
                                             'warning'
                                           );
                                         }}
-                                        className="flex items-center gap-3 p-4 border-4 border-gray-500 text-gray-900 rounded-lg hover:bg-gray-50 font-black text-lg"
+                                        className="flex items-center gap-2 p-3 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
                                       >
-                                        <RotateCcw className="w-6 h-6" />
+                                        <RotateCcw className="w-4 h-4" />
                                         Limpar TODAS Configurações
                                       </button>
                                     </div>
 
                                     {/* Informações Adicionais */}
-                                    <div className="bg-gray-100 p-4 rounded-lg border-4 border-gray-400">
-                                      <div className="text-lg text-gray-800 mb-3 font-bold">📋 Informações da Escala</div>
-                                      <div className="text-lg text-gray-900 font-bold">
+                                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                      <div className="text-sm text-gray-600 mb-2">📋 Informações da Escala</div>
+                                      <div className="text-sm text-gray-700">
                                         Para visualizar e editar a escala detalhada desta pessoa, 
                                         utilize o <strong>calendário principal</strong> na aba "Calendário".
                                         Lá você pode clicar nos nomes para alternar entre presencial e home office.
@@ -2476,142 +2586,37 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Templates Tab */}
-        {activeTab === 'templates' && userRole !== 'employee' && (
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-              <h3 className="font-black mb-6 text-gray-900 text-2xl">Templates de Escala</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h4 className="font-black mb-4 text-gray-900 text-xl">Aplicar Template</h4>
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    {Object.entries(templates).map(([key, template]) => (
-                      <div key={key} className="border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white">
-                        <div className="flex items-center justify-between mb-3">
-                          <h5 className="font-black text-gray-900 text-lg">{template.name}</h5>
-                          <div className="flex gap-3">
-                            <button
-                              onClick={() => applyTemplate(key, null, false)}
-                              className="px-4 py-2 bg-blue-600 text-white rounded text-lg hover:bg-blue-700 border-4 border-blue-800 font-black"
-                              title="Aplicar template substituindo todas as configurações"
-                            >
-                              Aplicar
-                            </button>
-                            {key !== 'manager_rotation' && key !== 'manual' && (
-                              <button
-                                onClick={() => applyTemplate(key, null, true)}
-                                className="px-4 py-2 bg-green-600 text-white rounded text-lg hover:bg-green-700 border-4 border-green-800 font-black"
-                                title="Aplicar template respeitando preferências individuais"
-                              >
-                                + Preferências
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          {key === 'manager_rotation' ? (
-                            <div className="flex items-center gap-2">
-                              <Users className="w-6 h-6 text-purple-600" />
-                              <span className="text-lg text-purple-600 font-black">Gestores</span>
-                            </div>
-                          ) : key === 'manual' ? (
-                            <div className="flex items-center gap-2">
-                              <Edit className="w-6 h-6 text-gray-600" />
-                              <span className="text-lg text-gray-600 font-black">Controle Manual</span>
-                            </div>
-                          ) : (
-                            template.pattern.map((status, index) => (
-                              <div
-                                key={index}
-                                className={`w-6 h-6 rounded border-2 border-gray-700 ${statusColors[status]}`}
-                                title={statusLabels[status]}
-                              ></div>
-                            ))
-                          )}
-                        </div>
-                        <div className="text-lg text-gray-800 mt-2 font-bold">
-                          {key === 'manager_rotation' 
-                            ? 'Mínimo de 2 gestores presenciais por dia'
-                            : key === 'manual'
-                              ? 'Configuração manual no calendário'
-                            : `Seg - Sex: ${template.pattern.join(' → ')}`
-                          }
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-black mb-4 text-gray-900 text-xl">Ações Rápidas</h4>
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <button
-                      onClick={copyPreviousWeek}
-                      className="w-full flex items-center gap-3 px-4 py-3 bg-blue-100 text-blue-900 rounded hover:bg-blue-200 border-4 border-blue-500 font-black text-lg"
-                    >
-                      <Copy className="w-6 h-6" />
-                      Replicar 1ª Semana
-                    </button>
-                    <button
-                      onClick={() => applyTemplate('4x1')}
-                      className="w-full flex items-center gap-3 px-4 py-3 bg-green-100 text-green-900 rounded hover:bg-green-200 border-4 border-green-500 font-black text-lg"
-                    >
-                      <RotateCcw className="w-6 h-6" />
-                      Aplicar 4x1
-                    </button>
-                    <button
-                      onClick={() => applyTemplate('manager_rotation')}
-                      className="w-full flex items-center gap-3 px-4 py-3 bg-purple-100 text-purple-900 rounded hover:bg-purple-200 border-4 border-purple-500 font-black text-lg"
-                    >
-                      <Users className="w-6 h-6" />
-                      Meta de Gestores
-                    </button>
-                    <button
-                      onClick={() => applyTemplate('manual')}
-                      className="w-full flex items-center gap-3 px-4 py-3 bg-gray-100 text-gray-900 rounded hover:bg-gray-200 border-4 border-gray-500 font-black text-lg"
-                    >
-                      <Edit className="w-6 h-6" />
-                      Modo Manual
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Reports Tab - Similar styling improvements */}
+        {/* Reports Tab */}
         {activeTab === 'reports' && userRole !== 'employee' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-              <h3 className="font-black mb-6 text-gray-900 text-2xl">📊 Configuração do Período de Análise</h3>
+            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
+              <h3 className="font-semibold mb-4">📊 Configuração do Período de Análise</h3>
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                 <div className="lg:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Modo de Análise</label>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Modo de Análise</label>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
                       <input
                         type="radio"
                         name="reportMode"
                         value="month"
                         checked={reportPeriodMode === 'month'}
                         onChange={(e) => setReportPeriodMode(e.target.value)}
-                        className="text-blue-600 scale-125"
+                        className="text-blue-600"
                       />
-                      <span className="text-lg font-black">📅 Mês Específico</span>
+                      <span className="text-sm">📅 Mês Específico</span>
                     </label>
-                    <label className="flex items-center gap-3">
+                    <label className="flex items-center gap-2">
                       <input
                         type="radio"
                         name="reportMode"
                         value="custom"
                         checked={reportPeriodMode === 'custom'}
                         onChange={(e) => setReportPeriodMode(e.target.value)}
-                        className="text-blue-600 scale-125"
+                        className="text-blue-600"
                       />
-                      <span className="text-lg font-black">📆 Período Personalizado</span>
+                      <span className="text-sm">📆 Período Personalizado</span>
                     </label>
                   </div>
                 </div>
@@ -2619,7 +2624,7 @@ const ScheduleApp = () => {
                 <div className="lg:col-span-1">
                   {reportPeriodMode === 'month' ? (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Mês/Ano</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Mês/Ano</label>
                       <input
                         type="month"
                         value={`${selectedReportMonth.getFullYear()}-${String(selectedReportMonth.getMonth() + 1).padStart(2, '0')}`}
@@ -2627,27 +2632,27 @@ const ScheduleApp = () => {
                           const [year, month] = e.target.value.split('-');
                           setSelectedReportMonth(new Date(parseInt(year), parseInt(month) - 1, 1));
                         }}
-                        className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                        className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                       />
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <div>
-                        <label className="block text-lg font-black text-gray-900 mb-2">Data de Início</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Data de Início</label>
                         <input
                           type="date"
                           value={reportStartDate}
                           onChange={(e) => setReportStartDate(e.target.value)}
-                          className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                          className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                         />
                       </div>
                       <div>
-                        <label className="block text-lg font-black text-gray-900 mb-2">Data de Fim</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Data de Fim</label>
                         <input
                           type="date"
                           value={reportEndDate}
                           onChange={(e) => setReportEndDate(e.target.value)}
-                          className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                          className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                         />
                       </div>
                     </div>
@@ -2657,12 +2662,12 @@ const ScheduleApp = () => {
                 <div className="lg:col-span-1 flex flex-col justify-end">
                   <button
                     onClick={resetToCurrentMonth}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-3 border-4 border-blue-800 font-black text-lg"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-2 border border-blue-800 font-medium"
                   >
                     🔄 Mês Atual
                   </button>
                   {advancedReportData.isValidPeriod && (
-                    <div className="text-lg text-gray-800 bg-gray-100 p-3 rounded border-4 border-gray-400 font-black text-center">
+                    <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded border border-gray-300">
                       📊 <strong>{advancedReportData.totalWorkdays} dias úteis</strong> no período
                     </div>
                   )}
@@ -2670,10 +2675,10 @@ const ScheduleApp = () => {
               </div>
 
               {reportPeriodMode === 'custom' && (!reportStartDate || !reportEndDate) && (
-                <div className="bg-yellow-50 border-4 border-yellow-400 p-4 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <span className="text-yellow-800 text-xl">⚠️</span>
-                    <span className="text-lg text-yellow-900 font-black">
+                <div className="bg-yellow-50 border border-yellow-300 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-yellow-600">⚠️</span>
+                    <span className="text-sm text-yellow-800">
                       Preencha as datas de início e fim.
                     </span>
                   </div>
@@ -2682,45 +2687,45 @@ const ScheduleApp = () => {
             </div>
 
             {advancedReportData.isValidPeriod && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-green-50 p-6 rounded-lg text-center border-4 border-green-400">
-                  <div className="text-4xl font-black text-green-800">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-green-50 p-4 rounded-lg text-center border border-green-300">
+                  <div className="text-2xl font-semibold text-green-600">
                     {advancedReportData.averages.office.toFixed(1)}
                   </div>
-                  <div className="text-lg text-green-900 font-black">Média Presencial</div>
-                  <div className="text-lg text-gray-700 font-bold">(dias/pessoa)</div>
+                  <div className="text-sm text-green-700 font-medium">Média Presencial</div>
+                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
                 </div>
-                <div className="bg-blue-50 p-6 rounded-lg text-center border-4 border-blue-400">
-                  <div className="text-4xl font-black text-blue-800">
+                <div className="bg-blue-50 p-4 rounded-lg text-center border border-blue-300">
+                  <div className="text-2xl font-semibold text-blue-600">
                     {advancedReportData.averages.home.toFixed(1)}
                   </div>
-                  <div className="text-lg text-blue-900 font-black">Média Home Office</div>
-                  <div className="text-lg text-gray-700 font-bold">(dias/pessoa)</div>
+                  <div className="text-sm text-blue-700 font-medium">Média Home Office</div>
+                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
                 </div>
-                <div className="bg-orange-50 p-6 rounded-lg text-center border-4 border-orange-400">
-                  <div className="text-4xl font-black text-orange-800">
+                <div className="bg-orange-50 p-4 rounded-lg text-center border border-orange-300">
+                  <div className="text-2xl font-semibold text-orange-600">
                     {advancedReportData.averages.vacation.toFixed(1)}
                   </div>
-                  <div className="text-lg text-orange-900 font-black">Média Férias</div>
-                  <div className="text-lg text-gray-700 font-bold">(dias/pessoa)</div>
+                  <div className="text-sm text-orange-700 font-medium">Média Férias</div>
+                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
                 </div>
-                <div className="bg-gray-100 p-6 rounded-lg text-center border-4 border-gray-500">
-                  <div className="text-4xl font-black text-gray-900">
+                <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-400">
+                  <div className="text-2xl font-semibold text-gray-600">
                     {advancedReportData.averages.holiday.toFixed(1)}
                   </div>
-                  <div className="text-lg text-gray-900 font-black">Média Plantão</div>
-                  <div className="text-lg text-gray-700 font-bold">(dias/pessoa)</div>
+                  <div className="text-sm text-gray-700 font-medium">Média Plantão</div>
+                  <div className="text-xs text-gray-500">(dias/pessoa)</div>
                 </div>
               </div>
             )}
 
             {advancedReportData.isValidPeriod && (
-              <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-                <h3 className="font-black mb-6 text-gray-900 text-2xl">Estatísticas Individuais por Pessoa</h3>
+              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
+                <h3 className="font-semibold mb-4">Estatísticas Individuais por Pessoa</h3>
                 
-                <div className="bg-gray-100 p-4 rounded-lg mb-6 border-4 border-gray-400">
-                  <h4 className="font-black text-gray-900 mb-3 text-xl">ℹ️ Sobre os Cálculos:</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg text-gray-800">
+                <div className="bg-gray-50 p-4 rounded-lg mb-4 border border-gray-300">
+                  <h4 className="font-medium text-gray-800 mb-2">ℹ️ Sobre os Cálculos:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
                     <div>• <strong>Dias úteis:</strong> segunda a sexta</div>
                     <div>• <strong>Percentual:</strong> exclui férias e feriados</div>
                     <div>• <strong>Dados insuficientes:</strong> menos de 3 dias válidos</div>
@@ -2728,7 +2733,7 @@ const ScheduleApp = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
                   {Object.values(advancedReportData.personalStats).map(stat => {
                     const presentialPercentage = stat.presentialPercentage;
                     const hasInsufficientData = stat.hasInsufficientData;
@@ -2749,72 +2754,72 @@ const ScheduleApp = () => {
                     return (
                       <div 
                         key={stat.name} 
-                        className={`p-4 rounded-lg border-4 transition-all ${
+                        className={`p-4 rounded-lg border transition-all ${
                           hasInsufficientData
-                            ? 'border-gray-500 bg-gray-100'
+                            ? 'border-gray-400 bg-gray-50'
                             : isHighDeviation 
-                              ? 'border-red-500 bg-red-50' 
+                              ? 'border-red-400 bg-red-50' 
                               : isLowPresence || isHighPresence
-                                ? 'border-yellow-500 bg-yellow-50'
-                                : 'border-gray-400 bg-white'
+                                ? 'border-yellow-400 bg-yellow-50'
+                                : 'border-gray-300 bg-white'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start justify-between mb-3">
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-black text-lg truncate text-gray-900">{getDisplayName(stat.name)}</h4>
-                            <div className="text-lg text-gray-800 font-bold">
+                            <h4 className="font-medium text-sm truncate">{getDisplayName(stat.name)}</h4>
+                            <div className="text-xs text-gray-600">
                               {employees.find(emp => emp.name === stat.name)?.team || 'Sem equipe'}
                             </div>
                             {hasInsufficientData && (
-                              <div className="text-lg text-gray-700 bg-gray-200 px-3 py-2 rounded mt-2 border-2 border-gray-500 font-black">
+                              <div className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded mt-1 border border-gray-400">
                                 ⚠️ Poucos dados ({stat.validDays} dias)
                               </div>
                             )}
                           </div>
-                          <div className="ml-3">
+                          <div className="ml-2">
                             {hasInsufficientData ? (
-                              <span className="text-gray-600 text-2xl" title="Dados insuficientes">📊</span>
+                              <span className="text-gray-400 text-lg" title="Dados insuficientes">📊</span>
                             ) : (
                               <>
-                                {isHighDeviation && <span className="text-red-800 text-2xl" title="Grande discrepância">⚠️</span>}
-                                {isLowPresence && <span className="text-blue-800 text-2xl" title="Baixa presença">🏠</span>}
-                                {isHighPresence && <span className="text-green-800 text-2xl" title="Alta presença">🏢</span>}
+                                {isHighDeviation && <span className="text-red-600 text-lg" title="Grande discrepância">⚠️</span>}
+                                {isLowPresence && <span className="text-blue-600 text-lg" title="Baixa presença">🏠</span>}
+                                {isHighPresence && <span className="text-green-600 text-lg" title="Alta presença">🏢</span>}
                               </>
                             )}
                           </div>
                         </div>
                         
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-lg text-gray-800 font-bold">🟢 Presencial:</span>
-                            <span className="font-black text-lg text-gray-900">{stat.office} dias</span>
+                            <span className="text-xs text-gray-600">🟢 Presencial:</span>
+                            <span className="font-medium text-sm">{stat.office} dias</span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-lg text-gray-800 font-bold">🔵 Home Office:</span>
-                            <span className="font-black text-lg text-gray-900">{stat.home} dias</span>
+                            <span className="text-xs text-gray-600">🔵 Home Office:</span>
+                            <span className="font-medium text-sm">{stat.home} dias</span>
                           </div>
                           {stat.vacation > 0 && (
                             <div className="flex justify-between items-center">
-                              <span className="text-lg text-gray-800 font-bold">🟠 Férias:</span>
-                              <span className="font-black text-lg text-gray-900">{stat.vacation} dias</span>
+                              <span className="text-xs text-gray-600">🟠 Férias:</span>
+                              <span className="font-medium text-sm">{stat.vacation} dias</span>
                             </div>
                           )}
                           {stat.holiday > 0 && (
                             <div className="flex justify-between items-center">
-                              <span className="text-lg text-gray-800 font-bold">⚫ Plantão:</span>
-                              <span className="font-black text-lg text-gray-900">{stat.holiday} dias</span>
+                              <span className="text-xs text-gray-600">⚫ Plantão:</span>
+                              <span className="font-medium text-sm">{stat.holiday} dias</span>
                             </div>
                           )}
                           
                           {!hasInsufficientData && stat.workDays > 0 && (
-                            <div className="mt-4">
-                              <div className="flex justify-between text-lg mb-2">
-                                <span className="font-bold">Presencial</span>
-                                <span className="font-black">{presentialPercentage.toFixed(0)}%</span>
+                            <div className="mt-3">
+                              <div className="flex justify-between text-xs mb-1">
+                                <span>Presencial</span>
+                                <span className="font-medium">{presentialPercentage.toFixed(0)}%</span>
                               </div>
-                              <div className="w-full bg-gray-300 rounded-full h-3 border-2 border-gray-500">
+                              <div className="w-full bg-gray-200 rounded-full h-2 border border-gray-400">
                                 <div 
-                                  className={`h-3 rounded-full transition-all ${
+                                  className={`h-2 rounded-full transition-all ${
                                     presentialPercentage < 30 ? 'bg-blue-500' :
                                     presentialPercentage > 70 ? 'bg-green-500' : 'bg-yellow-500'
                                   }`}
@@ -2827,17 +2832,17 @@ const ScheduleApp = () => {
                           {!hasInsufficientData && (
                             <>
                               {isHighDeviation && (
-                                <div className="mt-3 text-lg text-red-900 bg-red-100 p-3 rounded border-2 border-red-400 font-black">
+                                <div className="mt-2 text-xs text-red-600 bg-red-100 p-2 rounded border border-red-300">
                                   <strong>⚠️ Discrepância detectada</strong>
                                 </div>
                               )}
                               {isLowPresence && !isHighDeviation && (
-                                <div className="mt-3 text-lg text-blue-900 bg-blue-100 p-3 rounded border-2 border-blue-400 font-black">
+                                <div className="mt-2 text-xs text-blue-600 bg-blue-100 p-2 rounded border border-blue-300">
                                   <strong>🏠 Baixa presença</strong>
                                 </div>
                               )}
                               {isHighPresence && !isHighDeviation && (
-                                <div className="mt-3 text-lg text-green-900 bg-green-100 p-3 rounded border-2 border-green-400 font-black">
+                                <div className="mt-2 text-xs text-green-600 bg-green-100 p-2 rounded border border-green-300">
                                   <strong>🏢 Alta presença</strong>
                                 </div>
                               )}
@@ -2851,17 +2856,17 @@ const ScheduleApp = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-              <h3 className="font-black mb-6 text-gray-900 text-2xl">Histórico de Alterações</h3>
-              <div className="space-y-3 max-h-64 overflow-y-auto border-4 border-gray-500 rounded-lg p-4">
+            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
+              <h3 className="font-semibold mb-4">Histórico de Alterações</h3>
+              <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-400 rounded-lg p-4">
                 {changeHistory.slice(0, 10).map(change => (
-                  <div key={change.id} className="flex items-center justify-between p-4 bg-gray-100 rounded text-lg border-2 border-gray-400">
-                    <span className="font-bold text-gray-900">{change.action}</span>
-                    <span className="text-gray-800 font-bold">{change.timestamp.toLocaleString()}</span>
+                  <div key={change.id} className="flex items-center justify-between p-3 bg-gray-50 rounded text-sm border border-gray-300">
+                    <span>{change.action}</span>
+                    <span className="text-gray-500">{change.timestamp.toLocaleString()}</span>
                   </div>
                 ))}
                 {changeHistory.length === 0 && (
-                  <div className="text-center text-gray-700 py-8 font-bold text-xl">
+                  <div className="text-center text-gray-500 py-8">
                     Nenhuma alteração registrada ainda
                   </div>
                 )}
@@ -2873,37 +2878,37 @@ const ScheduleApp = () => {
         {/* Settings Tab */}
         {activeTab === 'settings' && userRole !== 'employee' && (
           <div className="space-y-6">
-            <div className="bg-red-50 border-4 border-red-400 rounded-lg shadow-lg p-6">
+            <div className="bg-red-50 border-2 border-red-300 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl font-black text-red-900 mb-3">🔄 Iniciar Nova Escala</h3>
-                  <p className="text-lg text-red-800 mb-2 font-black">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">🔄 Iniciar Nova Escala</h3>
+                  <p className="text-sm text-red-700 mb-1">
                     <strong>⚠️ CUIDADO:</strong> Reset completo do sistema!
                   </p>
-                  <p className="text-lg text-red-700 font-bold">
+                  <p className="text-xs text-red-600">
                     Remove TODAS as pessoas e limpa todas as escalas.
                   </p>
                 </div>
                 <button
                   onClick={startNewSchedule}
-                  className="flex items-center gap-3 px-8 py-4 bg-red-600 text-white rounded-lg hover:bg-red-700 font-black text-xl border-4 border-red-900 transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium border border-red-800 transition-all hover:scale-105"
                   disabled={userRole === 'employee'}
                 >
-                  <RotateCcw className="w-7 h-7" />
+                  <RotateCcw className="w-5 h-5" />
                   Iniciar Nova Escala
                 </button>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-400">
-              <h3 className="font-black mb-6 text-gray-900 text-2xl">Configurações do Sistema</h3>
+            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
+              <h3 className="font-semibold mb-4">Configurações do Sistema</h3>
               
-              <div className="bg-blue-50 border-4 border-blue-400 rounded-lg p-6 mb-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 text-blue-800 mt-1 text-2xl">ℹ️</div>
+              <div className="bg-blue-50 border border-blue-300 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
                   <div>
-                    <h4 className="font-black text-blue-900 mb-3 text-xl">Sistema de Metas Atualizado</h4>
-                    <div className="text-lg text-blue-800 space-y-2 font-bold">
+                    <h4 className="font-medium text-blue-900 mb-1">Sistema de Metas Atualizado</h4>
+                    <div className="text-sm text-blue-700 space-y-1">
                       <div>• <strong>Meta presencial:</strong> Sempre respeitada (prioridade absoluta)</div>
                       <div>• <strong>Capacidade máxima:</strong> Apenas indicador visual - não limita</div>
                       <div>• <strong>Superlotação:</strong> Fundo vermelho no calendário quando exceder</div>
@@ -2913,26 +2918,26 @@ const ScheduleApp = () => {
                 </div>
               </div>
               
-              <div className="bg-gray-100 p-6 rounded-lg border-4 border-gray-400">
-                <h4 className="font-black mb-4 text-gray-900 text-xl">Capacidade e Metas</h4>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                <h4 className="font-medium mb-3">Capacidade e Metas</h4>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Capacidade Máxima do Escritório (Indicador Visual)
                   </label>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <input
                       type="number"
                       value={maxCapacity}
                       onChange={(e) => setMaxCapacity(Number(e.target.value))}
-                      className="flex-1 px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                      className="flex-1 px-3 py-2 border border-gray-400 rounded-lg"
                       min="1"
                     />
-                    <span className="text-lg text-gray-800 font-bold">pessoas</span>
+                    <span className="text-sm text-gray-600">pessoas</span>
                   </div>
-                  <div className="text-lg text-gray-700 mt-2 font-bold">
+                  <div className="text-xs text-gray-500 mt-1">
                     📊 Apenas para alerta visual - não limita a meta presencial
                   </div>
-                  <div className="text-lg text-orange-800 mt-2 font-black">
+                  <div className="text-xs text-orange-600 mt-1">
                     ⚠️ Dias com mais pessoas ficam com fundo vermelho
                   </div>
                 </div>
@@ -2944,27 +2949,27 @@ const ScheduleApp = () => {
         {/* Modal de Salvamento */}
         {showSaveModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl border border-gray-400">
               <div className="p-6">
-                <h3 className="text-2xl font-black mb-6 text-gray-900">💾 Salvar Escala em Slot</h3>
+                <h3 className="text-xl font-semibold mb-6 text-gray-900">💾 Salvar Escala em Slot</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {Object.entries(savedSchedules).map(([slotId, data]) => (
-                    <div key={slotId} className={`p-6 rounded-lg border-4 ${data ? 'border-green-500 bg-green-50' : 'border-gray-400 bg-gray-50'}`}>
+                    <div key={slotId} className={`p-6 rounded-lg border ${data ? 'border-green-400 bg-green-50' : 'border-gray-400 bg-gray-50'}`}>
                       <div className="text-center mb-4">
-                        <h4 className="text-xl font-black text-gray-900">Slot {slotId.slice(-1)}</h4>
+                        <h4 className="text-lg font-medium text-gray-900">Slot {slotId.slice(-1)}</h4>
                         {data ? (
                           <div className="mt-3">
-                            <div className="text-lg font-bold text-green-800">{data.metadata.customName}</div>
-                            <div className="text-lg text-gray-700 font-bold">
+                            <div className="text-sm font-medium text-green-800">{data.metadata.customName}</div>
+                            <div className="text-sm text-gray-700">
                               {data.metadata.employeeCount} pessoas
                             </div>
-                            <div className="text-lg text-gray-600 font-bold">
+                            <div className="text-sm text-gray-600">
                               Salvo: {new Date(data.metadata.savedAt).toLocaleDateString()}
                             </div>
                           </div>
                         ) : (
-                          <div className="text-lg text-gray-600 font-bold">Vazio</div>
+                          <div className="text-sm text-gray-600">Vazio</div>
                         )}
                       </div>
                       
@@ -2974,7 +2979,7 @@ const ScheduleApp = () => {
                           saveScheduleToSlot(slotId, customName);
                           setShowSaveModal(false);
                         }}
-                        className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 border-4 border-green-800 font-black text-lg"
+                        className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border border-green-800 font-medium"
                       >
                         {data ? '🔄 Sobrescrever' : '💾 Salvar Aqui'}
                       </button>
@@ -2985,7 +2990,7 @@ const ScheduleApp = () => {
                 <div className="mt-6 text-center">
                   <button
                     onClick={() => setShowSaveModal(false)}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border-4 border-gray-700 font-black text-lg"
+                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border border-gray-700 font-medium"
                   >
                     Cancelar
                   </button>
@@ -2998,27 +3003,27 @@ const ScheduleApp = () => {
         {/* Modal de Carregamento */}
         {showLoadModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl border border-gray-400">
               <div className="p-6">
-                <h3 className="text-2xl font-black mb-6 text-gray-900">📂 Carregar Escala de Slot</h3>
+                <h3 className="text-xl font-semibold mb-6 text-gray-900">📂 Carregar Escala de Slot</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {Object.entries(savedSchedules).map(([slotId, data]) => (
-                    <div key={slotId} className={`p-6 rounded-lg border-4 ${data ? 'border-blue-500 bg-blue-50' : 'border-gray-400 bg-gray-50'}`}>
+                    <div key={slotId} className={`p-6 rounded-lg border ${data ? 'border-blue-400 bg-blue-50' : 'border-gray-400 bg-gray-50'}`}>
                       <div className="text-center mb-4">
-                        <h4 className="text-xl font-black text-gray-900">Slot {slotId.slice(-1)}</h4>
+                        <h4 className="text-lg font-medium text-gray-900">Slot {slotId.slice(-1)}</h4>
                         {data ? (
                           <div className="mt-3">
-                            <div className="text-lg font-bold text-blue-800">{data.metadata.customName}</div>
-                            <div className="text-lg text-gray-700 font-bold">
+                            <div className="text-sm font-medium text-blue-800">{data.metadata.customName}</div>
+                            <div className="text-sm text-gray-700">
                               {data.metadata.employeeCount} pessoas
                             </div>
-                            <div className="text-lg text-gray-600 font-bold">
+                            <div className="text-sm text-gray-600">
                               Salvo: {new Date(data.metadata.savedAt).toLocaleDateString()}
                             </div>
                           </div>
                         ) : (
-                          <div className="text-lg text-gray-600 font-bold">Vazio</div>
+                          <div className="text-sm text-gray-600">Vazio</div>
                         )}
                       </div>
                       
@@ -3029,7 +3034,7 @@ const ScheduleApp = () => {
                             setShowLoadModal(false);
                           }}
                           disabled={!data}
-                          className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-4 border-blue-800 font-black text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           📂 Carregar
                         </button>
@@ -3038,7 +3043,7 @@ const ScheduleApp = () => {
                             onClick={() => {
                               deleteScheduleFromSlot(slotId);
                             }}
-                            className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 border-4 border-red-800 font-black text-lg"
+                            className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 border border-red-800 font-medium"
                           >
                             🗑️ Excluir
                           </button>
@@ -3051,7 +3056,7 @@ const ScheduleApp = () => {
                 <div className="mt-6 text-center">
                   <button
                     onClick={() => setShowLoadModal(false)}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border-4 border-gray-700 font-black text-lg"
+                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border border-gray-700 font-medium"
                   >
                     Cancelar
                   </button>
@@ -3061,31 +3066,31 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Modals existentes com estilo melhorado */}
+        {/* Modal de Adicionar Funcionário */}
         {showAddEmployee && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border border-gray-400">
               <div className="p-6">
-                <h3 className="text-2xl font-black mb-6 text-gray-900">Adicionar Nova Pessoa</h3>
-                <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Adicionar Nova Pessoa</h3>
+                <div className="space-y-3">
                   <input
                     type="text"
                     placeholder="Nome completo"
                     value={newEmployee.name}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                   />
                   <input
                     type="text"
                     placeholder="Equipe"
                     value={newEmployee.team}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, team: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                   />
                   <select
                     value={newEmployee.type}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, type: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                   >
                     <option value="variable">Presença Variável</option>
                     <option value="always_office">Sempre Presencial</option>
@@ -3094,32 +3099,31 @@ const ScheduleApp = () => {
                   <select
                     value={newEmployee.workingHours}
                     onChange={(e) => setNewEmployee(prev => ({ ...prev, workingHours: e.target.value }))}
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                   >
                     {Object.entries(workingHours).map(([key, hours]) => (
                       <option key={key} value={key}>{hours.label}</option>
                     ))}
                   </select>
-                  <label className="flex items-center gap-3">
+                  <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={newEmployee.isManager}
                       onChange={(e) => setNewEmployee(prev => ({ ...prev, isManager: e.target.checked }))}
-                      className="scale-125"
                     />
-                    <span className="text-lg font-black">Gestor</span>
+                    <span className="text-sm">Gestor</span>
                   </label>
                 </div>
-                <div className="flex gap-4 mt-8">
+                <div className="flex gap-3 mt-6">
                   <button
                     onClick={addEmployee}
-                    className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border-4 border-blue-800 font-black text-lg"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-800 font-medium"
                   >
                     Adicionar
                   </button>
                   <button
                     onClick={() => setShowAddEmployee(false)}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border-4 border-gray-700 font-black text-lg"
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 border border-gray-500 font-medium"
                   >
                     Cancelar
                   </button>
@@ -3129,17 +3133,17 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Modal de Importação - com estilo melhorado */}
+        {/* Modal de Importação */}
         {showImportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border border-gray-400">
               <div className="p-6">
-                <h3 className="text-2xl font-black mb-6 text-gray-900">📋 Importar Lista de Pessoas</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">📋 Importar Lista de Pessoas</h3>
                 
-                <div className="bg-blue-50 p-4 rounded-lg mb-6 border-4 border-blue-400">
-                  <div className="text-lg text-blue-900">
+                <div className="bg-blue-50 p-3 rounded-lg mb-4 border border-blue-300">
+                  <div className="text-sm text-blue-800">
                     <strong>💡 Como usar:</strong>
-                    <div className="mt-2 space-y-2 font-bold">
+                    <div className="mt-1 space-y-1">
                       <div>• Cole ou digite um nome por linha</div>
                       <div>• Todas as pessoas serão criadas como "Presença Variável"</div>
                       <div>• Horário padrão: 9h às 17h (você pode editar depois)</div>
@@ -3148,26 +3152,26 @@ const ScheduleApp = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-4">
-                  <label className="block text-lg font-black text-gray-900">
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700">
                     Lista de Nomes (um por linha):
                   </label>
                   <textarea
                     value={importText}
                     onChange={(e) => setImportText(e.target.value)}
                     placeholder="João da Silva&#10;Maria Santos&#10;Pedro Oliveira&#10;Ana Costa"
-                    className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg h-40 resize-none font-bold text-lg"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg h-40 resize-none"
                     rows={8}
                   />
-                  <div className="text-lg text-gray-700 font-bold">
+                  <div className="text-xs text-gray-500">
                     {importText.trim() ? `${importText.trim().split('\n').filter(n => n.trim()).length} pessoas para importar` : 'Nenhuma pessoa para importar'}
                   </div>
                 </div>
                 
-                <div className="flex gap-4 mt-8">
+                <div className="flex gap-3 mt-6">
                   <button
                     onClick={importEmployees}
-                    className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 border-4 border-green-800 font-black text-lg"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 border border-green-800 font-medium"
                     disabled={!importText.trim()}
                   >
                     ✅ Importar Pessoas
@@ -3177,7 +3181,7 @@ const ScheduleApp = () => {
                       setShowImportModal(false);
                       setImportText('');
                     }}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border-4 border-gray-700 font-black text-lg"
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 border border-gray-500 font-medium"
                   >
                     Cancelar
                   </button>
@@ -3187,36 +3191,36 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Modal de Férias - com estilo melhorado */}
+        {/* Modal de Férias */}
         {showVacationForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border border-gray-400">
               <div className="p-6">
-                <h3 className="text-2xl font-black mb-6 text-gray-900">Definir Período de Férias</h3>
-                <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Definir Período de Férias</h3>
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-lg font-black text-gray-900 mb-2">Data de Início</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data de Início</label>
                     <input
                       type="date"
                       value={vacationData.start}
                       onChange={(e) => setVacationData(prev => ({ ...prev, start: e.target.value }))}
-                      className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                      className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                     />
                   </div>
                   <div>
-                    <label className="block text-lg font-black text-gray-900 mb-2">Data de Fim</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data de Fim</label>
                     <input
                       type="date"
                       value={vacationData.end}
                       onChange={(e) => setVacationData(prev => ({ ...prev, end: e.target.value }))}
-                      className="w-full px-4 py-3 border-4 border-gray-500 rounded-lg font-bold text-lg"
+                      className="w-full px-3 py-2 border border-gray-400 rounded-lg"
                     />
                   </div>
                 </div>
-                <div className="flex gap-4 mt-8">
+                <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setPersonVacation(vacationPersonId, vacationData.start, vacationData.end)}
-                    className="flex-1 px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 border-4 border-orange-800 font-black text-lg"
+                    className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 border border-orange-800 font-medium"
                     disabled={!vacationData.start || !vacationData.end}
                   >
                     Definir Férias
@@ -3227,7 +3231,7 @@ const ScheduleApp = () => {
                       setVacationPersonId(null);
                       setVacationData({ start: '', end: '' });
                     }}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 border-4 border-gray-700 font-black text-lg"
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 border border-gray-500 font-medium"
                   >
                     Cancelar
                   </button>
@@ -3237,82 +3241,82 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Modal de Template Manual - com estilo melhorado */}
+        {/* Modal de Template Manual */}
         {showManualTemplateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border border-gray-400">
               <div className="p-6">
-                <h3 className="text-2xl font-black mb-6 text-gray-900">🎯 Configurar Template Manual</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">🎯 Configurar Template Manual</h3>
                 
-                <div className="mb-6">
-                  <p className="text-lg text-gray-900 font-black mb-4">
+                <div className="mb-4">
+                  <p className="text-sm text-gray-700 font-medium mb-3">
                     Como você quer inicializar as pessoas no calendário?
                   </p>
                   
-                  <div className="space-y-4">
-                    <label className="flex items-start gap-4 p-4 border-4 border-gray-400 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <div className="space-y-3">
+                    <label className="flex items-start gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
                         value="blank"
                         checked={manualTemplateOption === 'blank'}
                         onChange={(e) => setManualTemplateOption(e.target.value)}
-                        className="mt-1 text-blue-600 scale-125"
+                        className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-black text-lg">⚫ Deixar em branco</div>
-                        <div className="text-lg text-gray-800 font-bold">
+                        <div className="font-medium">⚫ Deixar em branco</div>
+                        <div className="text-sm text-gray-600">
                           Pessoas não aparecem no calendário • Você define uma por uma do zero
                         </div>
                       </div>
                     </label>
                     
-                    <label className="flex items-start gap-4 p-4 border-4 border-gray-400 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
                         value="all_office"
                         checked={manualTemplateOption === 'all_office'}
                         onChange={(e) => setManualTemplateOption(e.target.value)}
-                        className="mt-1 text-blue-600 scale-125"
+                        className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-black text-lg">🟢 Iniciar todas como Presencial</div>
-                        <div className="text-lg text-gray-800 font-bold">
+                        <div className="font-medium">🟢 Iniciar todas como Presencial</div>
+                        <div className="text-sm text-gray-600">
                           Todas as pessoas aparecem no escritório • Clique nos nomes para mandar para home office
                         </div>
                       </div>
                     </label>
                     
-                    <label className="flex items-start gap-4 p-4 border-4 border-gray-400 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
                         value="all_home"
                         checked={manualTemplateOption === 'all_home'}
                         onChange={(e) => setManualTemplateOption(e.target.value)}
-                        className="mt-1 text-blue-600 scale-125"
+                        className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-black text-lg">🔵 Iniciar todas como Home Office</div>
-                        <div className="text-lg text-gray-800 font-bold">
+                        <div className="font-medium">🔵 Iniciar todas como Home Office</div>
+                        <div className="text-sm text-gray-600">
                           Todas as pessoas aparecem em casa • Clique nos nomes para trazer ao escritório
                         </div>
                       </div>
                     </label>
                     
-                    <label className="flex items-start gap-4 p-4 border-4 border-gray-400 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="manualOption"
                         value="distribute_50_50"
                         checked={manualTemplateOption === 'distribute_50_50'}
                         onChange={(e) => setManualTemplateOption(e.target.value)}
-                        className="mt-1 text-blue-600 scale-125"
+                        className="mt-1 text-blue-600"
                       />
                       <div>
-                        <div className="font-black text-lg">⚡ Distribuir automaticamente (50/50)</div>
-                        <div className="text-lg text-gray-800 font-bold">
+                        <div className="font-medium">⚡ Distribuir automaticamente (50/50)</div>
+                        <div className="text-sm text-gray-600">
                           Metade presencial, metade home office • Distribuição aleatória como ponto de partida
                         </div>
                       </div>
@@ -3320,10 +3324,10 @@ const ScheduleApp = () => {
                   </div>
                 </div>
                 
-                <div className="bg-blue-50 p-4 rounded-lg mb-8 border-4 border-blue-400">
-                  <div className="text-lg text-blue-900">
+                <div className="bg-blue-50 p-3 rounded-lg mb-6 border border-blue-300">
+                  <div className="text-sm text-blue-800">
                     <strong>💡 Explicação:</strong>
-                    <div className="mt-2 font-bold">
+                    <div className="mt-1">
                       O Template Manual limpa todas as configurações automáticas e te dá controle total. 
                       Escolha como quer que as pessoas apareçam inicialmente no calendário - depois é só 
                       clicar nos nomes para alternar entre presencial/home office conforme sua necessidade.
@@ -3331,10 +3335,10 @@ const ScheduleApp = () => {
                   </div>
                 </div>
                 
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
                     onClick={() => executeManualTemplate(manualTemplateOption)}
-                    className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors border-4 border-blue-800 font-black text-lg"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors border border-blue-800 font-medium"
                   >
                     Aplicar Template
                   </button>
@@ -3343,7 +3347,7 @@ const ScheduleApp = () => {
                       setShowManualTemplateModal(false);
                       setManualTemplateOption('blank');
                     }}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors border-4 border-gray-700 font-black text-lg"
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors border border-gray-500 font-medium"
                   >
                     Cancelar
                   </button>
@@ -3353,43 +3357,43 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Modal de Confirmação - com estilo melhorado */}
+        {/* Modal de Confirmação */}
         {showConfirmModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border-4 border-gray-500">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md border border-gray-400">
               <div className="p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl border-4 ${
-                    confirmModalData.type === 'danger' ? 'bg-red-100 text-red-800 border-red-500' :
-                    confirmModalData.type === 'warning' ? 'bg-yellow-100 text-yellow-800 border-yellow-500' :
-                    'bg-blue-100 text-blue-800 border-blue-500'
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl border ${
+                    confirmModalData.type === 'danger' ? 'bg-red-100 text-red-600 border-red-400' :
+                    confirmModalData.type === 'warning' ? 'bg-yellow-100 text-yellow-600 border-yellow-400' :
+                    'bg-blue-100 text-blue-600 border-blue-400'
                   }`}>
                     {confirmModalData.type === 'danger' ? '⚠️' :
                      confirmModalData.type === 'warning' ? '❓' : 'ℹ️'}
                   </div>
-                  <h3 className="text-2xl font-black text-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900">
                     {confirmModalData.title}
                   </h3>
                 </div>
                 
-                <div className="mb-8">
-                  <p className="text-lg text-gray-900 whitespace-pre-line font-bold">
+                <div className="mb-6">
+                  <p className="text-gray-700 whitespace-pre-line">
                     {confirmModalData.message}
                   </p>
                 </div>
                 
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   {confirmModalData.cancelText && (
                     <button
                       onClick={confirmModalData.onCancel}
-                      className="flex-1 px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors border-4 border-gray-700 font-black text-lg"
+                      className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors border border-gray-500 font-medium"
                     >
                       {confirmModalData.cancelText}
                     </button>
                   )}
                   <button
                     onClick={confirmModalData.onConfirm}
-                    className={`flex-1 px-6 py-3 rounded-lg transition-colors font-black text-lg border-4 ${
+                    className={`flex-1 px-4 py-2 rounded-lg transition-colors font-medium border ${
                       confirmModalData.type === 'danger' 
                         ? 'bg-red-600 text-white hover:bg-red-700 border-red-800' 
                         : 'bg-blue-600 text-white hover:bg-blue-700 border-blue-800'
@@ -3403,50 +3407,50 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Help Modal - mantendo o mesmo estilo mas com fonte maior */}
+        {/* Help Modal */}
         {showHelp && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border-4 border-gray-500">
-              <div className="sticky top-0 bg-white border-b-4 border-gray-500 px-6 py-4 flex items-center justify-between z-10">
-                <h3 className="text-2xl font-black text-gray-900">📚 Ajuda e Legendas</h3>
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-gray-400">
+              <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
+                <h3 className="text-xl font-semibold">📚 Ajuda e Legendas</h3>
                 <button
                   onClick={() => {
                     setShowHelp(false);
                     setActiveHelpTab('basico');
                   }}
-                  className="flex-shrink-0 p-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg border-4 border-gray-500"
+                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-400"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex gap-2 px-6 pt-4 border-b-4 border-gray-500 bg-gray-100">
+              <div className="flex gap-1 px-6 pt-4 border-b bg-gray-50">
                 <button
                   onClick={() => setActiveHelpTab('basico')}
-                  className={`px-6 py-3 rounded-t-lg text-lg font-black transition-colors border-4 ${
+                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors border ${
                     activeHelpTab === 'basico'
-                      ? 'bg-white text-blue-800 border-blue-700 border-b-0'
-                      : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200 border-gray-400'
+                      ? 'bg-white text-blue-600 border-blue-600 border-b-white'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-400'
                   }`}
                 >
                   🎯 Básico
                 </button>
                 <button
                   onClick={() => setActiveHelpTab('funcionalidades')}
-                  className={`px-6 py-3 rounded-t-lg text-lg font-black transition-colors border-4 ${
+                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors border ${
                     activeHelpTab === 'funcionalidades'
-                      ? 'bg-white text-blue-800 border-blue-700 border-b-0'
-                      : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200 border-gray-400'
+                      ? 'bg-white text-blue-600 border-blue-600 border-b-white'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-400'
                   }`}
                 >
                   ⚙️ Funcionalidades
                 </button>
                 <button
                   onClick={() => setActiveHelpTab('dicas')}
-                  className={`px-6 py-3 rounded-t-lg text-lg font-black transition-colors border-4 ${
+                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors border ${
                     activeHelpTab === 'dicas'
-                      ? 'bg-white text-blue-800 border-blue-700 border-b-0'
-                      : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200 border-gray-400'
+                      ? 'bg-white text-blue-600 border-blue-600 border-b-white'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-400'
                   }`}
                 >
                   💡 Dicas
@@ -3456,49 +3460,49 @@ const ScheduleApp = () => {
               <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
                 {activeHelpTab === 'basico' && (
                   <div className="space-y-6">
-                    <div className="bg-blue-50 p-6 rounded-lg border-4 border-blue-400">
-                      <h4 className="font-black text-blue-900 mb-4 text-xl">👥 Perfis de Usuário</h4>
-                      <div className="space-y-3 text-lg">
-                        <div className="flex items-center gap-3">
-                          <span className="font-black">👑 Admin:</span>
-                          <span className="font-bold">Controle total do sistema</span>
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-300">
+                      <h4 className="font-semibold text-blue-800 mb-3">👥 Perfis de Usuário</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">👑 Admin:</span>
+                          <span>Controle total do sistema</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="font-black">👨‍💼 Gestor:</span>
-                          <span className="font-bold">Gerencia escalas e equipes</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">👨‍💼 Gestor:</span>
+                          <span>Gerencia escalas e equipes</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="font-black">👤 Colaborador:</span>
-                          <span className="font-bold">Visualização apenas</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-green-50 p-6 rounded-lg border-4 border-green-400">
-                      <h4 className="font-black text-green-900 mb-4 text-xl">🎨 Status e Cores</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded bg-green-500 flex-shrink-0 border-2 border-gray-700"></div>
-                          <span className="font-bold">🟢 Presencial - Pessoa no escritório</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded bg-blue-500 flex-shrink-0 border-2 border-gray-700"></div>
-                          <span className="font-bold">🔵 Home Office - Pessoa trabalhando de casa</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded bg-orange-500 flex-shrink-0 border-2 border-gray-700"></div>
-                          <span className="font-bold">🟠 Férias - Pessoa de férias</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded bg-gray-500 flex-shrink-0 border-2 border-gray-700"></div>
-                          <span className="font-bold">⚫ Plantão/Feriado - Pessoa trabalhando em dia especial</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">👤 Colaborador:</span>
+                          <span>Visualização apenas</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-purple-50 p-6 rounded-lg border-4 border-purple-400">
-                      <h4 className="font-black text-purple-900 mb-4 text-xl">👔 Regimes de Trabalho</h4>
-                      <div className="space-y-3 text-lg font-bold">
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-300">
+                      <h4 className="font-semibold text-green-800 mb-3">🎨 Status e Cores</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-green-500 flex-shrink-0 border border-gray-600"></div>
+                          <span>🟢 Presencial - Pessoa no escritório</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-blue-500 flex-shrink-0 border border-gray-600"></div>
+                          <span>🔵 Home Office - Pessoa trabalhando de casa</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-orange-500 flex-shrink-0 border border-gray-600"></div>
+                          <span>🟠 Férias - Pessoa de férias</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-gray-500 flex-shrink-0 border border-gray-600"></div>
+                          <span>⚫ Plantão/Feriado - Pessoa trabalhando em dia especial</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-300">
+                      <h4 className="font-semibold text-purple-800 mb-3">👔 Regimes de Trabalho</h4>
+                      <div className="space-y-2 text-sm">
                         <div><strong>Sempre Presencial:</strong> 5 dias/semana no escritório</div>
                         <div><strong>Sempre Home Office:</strong> 0 dias presencial</div>
                         <div><strong>Presença Variável:</strong> 1-5 dias configuráveis</div>
@@ -3509,9 +3513,9 @@ const ScheduleApp = () => {
 
                 {activeHelpTab === 'funcionalidades' && (
                   <div className="space-y-6">
-                    <div className="bg-yellow-50 p-6 rounded-lg border-4 border-yellow-400">
-                      <h4 className="font-black text-yellow-900 mb-4 text-xl">📋 Templates de Escala</h4>
-                      <div className="space-y-3 text-lg font-bold">
+                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-300">
+                      <h4 className="font-semibold text-yellow-800 mb-3">📋 Templates de Escala</h4>
+                      <div className="space-y-2 text-sm">
                         <div><strong>3x2:</strong> 3 dias presencial + 2 dias home office por semana</div>
                         <div><strong>4x1:</strong> 4 dias presencial + 1 dia home office por semana</div>
                         <div><strong>2x3:</strong> 2 dias presencial + 3 dias home office por semana</div>
@@ -3521,9 +3525,9 @@ const ScheduleApp = () => {
                       </div>
                     </div>
 
-                    <div className="bg-indigo-50 p-6 rounded-lg border-4 border-indigo-400">
-                      <h4 className="font-black text-indigo-900 mb-4 text-xl">🔍 Sistema de Filtros</h4>
-                      <div className="space-y-3 text-lg font-bold">
+                    <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-300">
+                      <h4 className="font-semibold text-indigo-800 mb-3">🔍 Sistema de Filtros</h4>
+                      <div className="space-y-2 text-sm">
                         <div><strong>Por Nome:</strong> Busca parcial no nome da pessoa</div>
                         <div><strong>Por Equipe:</strong> Filtra pessoas de equipes específicas</div>
                         <div><strong>Por Status Atual:</strong> Mostra apenas pessoas presenciais, home office, férias ou plantão</div>
@@ -3531,9 +3535,9 @@ const ScheduleApp = () => {
                       </div>
                     </div>
 
-                    <div className="bg-green-50 p-6 rounded-lg border-4 border-green-400">
-                      <h4 className="font-black text-green-900 mb-4 text-xl">💾 Sistema de Múltiplos Salvamentos</h4>
-                      <div className="space-y-3 text-lg font-bold">
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-300">
+                      <h4 className="font-semibold text-green-800 mb-3">💾 Sistema de Múltiplos Salvamentos</h4>
+                      <div className="space-y-2 text-sm">
                         <div><strong>3 Slots:</strong> Salve até 3 escalas diferentes</div>
                         <div><strong>Nomes Personalizados:</strong> Dê nomes específicos para cada escala</div>
                         <div><strong>Carregamento Rápido:</strong> Troque entre escalas instantaneamente</div>
@@ -3545,31 +3549,31 @@ const ScheduleApp = () => {
 
                 {activeHelpTab === 'dicas' && (
                   <div className="space-y-6">
-                    <div className="bg-gray-100 p-6 rounded-lg border-4 border-gray-500">
-                      <h4 className="font-black text-gray-900 mb-4 text-xl">📊 Indicadores</h4>
-                      <div className="space-y-3 text-lg font-bold">
-                        <div className="flex items-center gap-3">
-                          <span className="text-green-800 flex-shrink-0">✓</span>
+                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                      <h4 className="font-semibold text-gray-800 mb-3">📊 Indicadores</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600 flex-shrink-0">✓</span>
                           <span>Meta atingida - número ideal de pessoas no escritório</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-orange-800 flex-shrink-0">↑</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-orange-600 flex-shrink-0">↑</span>
                           <span>Poucas pessoas - abaixo da meta estabelecida</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-blue-800 flex-shrink-0">↓</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-blue-600 flex-shrink-0">↓</span>
                           <span>Muitas pessoas - acima da meta estabelecida</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <AlertTriangle className="w-6 h-6 text-red-800 flex-shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />
                           <span>Capacidade excedida - limite físico ultrapassado</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-green-50 p-6 rounded-lg border-4 border-green-400">
-                      <h4 className="font-black text-green-900 mb-4 text-xl">⌨️ Atalhos Rápidos</h4>
-                      <div className="space-y-3 text-lg font-bold">
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-300">
+                      <h4 className="font-semibold text-green-800 mb-3">⌨️ Atalhos Rápidos</h4>
+                      <div className="space-y-2 text-sm">
                         <div><strong>Clique nos nomes:</strong> Alterna entre presencial e home office (apenas pessoas variáveis)</div>
                         <div><strong>Ícone calendário:</strong> Marca/desmarca feriados nos dias úteis</div>
                         <div><strong>Ativar Plantão:</strong> Habilita plantão em fins de semana quando necessário</div>
@@ -3578,9 +3582,9 @@ const ScheduleApp = () => {
                       </div>
                     </div>
 
-                    <div className="bg-amber-50 p-6 rounded-lg border-4 border-amber-400">
-                      <h4 className="font-black text-amber-900 mb-4 text-xl">🏆 Melhores Práticas</h4>
-                      <div className="space-y-3 text-lg font-bold">
+                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-300">
+                      <h4 className="font-semibold text-amber-800 mb-3">🏆 Melhores Práticas</h4>
+                      <div className="space-y-2 text-sm">
                         <div><strong>1. Salve Regularmente:</strong> Use os 3 slots para diferentes cenários</div>
                         <div><strong>2. Configure as pessoas:</strong> Defina equipes e preferências antes de aplicar templates</div>
                         <div><strong>3. Monitore relatórios:</strong> Acompanhe se as metas estão sendo cumpridas</div>
