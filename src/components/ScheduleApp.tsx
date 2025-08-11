@@ -1242,7 +1242,7 @@ const ScheduleApp = () => {
       `}</style>
       
       <div className="max-w-7xl mx-auto">
-        {/* Header - MUDANÇA 1: Reduzi text-3xl para text-xl e removeu font-black */}
+        {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -1251,7 +1251,7 @@ const ScheduleApp = () => {
             </div>
             
             <div className="flex items-center gap-4">
-              {/* Seletor de Perfil - MUDANÇA 2: Reduzi tamanhos e bordas */}
+              {/* Seletor de Perfil */}
               <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 border border-gray-400">
                 <div className="text-sm text-gray-800">👤</div>
                 <select
@@ -1282,7 +1282,7 @@ const ScheduleApp = () => {
             </div>
           </div>
 
-          {/* Tabs - MUDANÇA 3: Reduzi tamanhos das bordas e fontes */}
+          {/* Tabs */}
           <div className="flex gap-4 mt-4 border-b border-gray-300">
             <button
               onClick={() => setActiveTab('calendar')}
@@ -1354,7 +1354,7 @@ const ScheduleApp = () => {
           </div>
         </div>
 
-        {/* Aviso para Colaboradores - MUDANÇA 4: Reduzindo excessos */}
+        {/* Aviso para Colaboradores */}
         {userRole === 'employee' && (
           <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-3">
@@ -1375,13 +1375,12 @@ const ScheduleApp = () => {
         {/* Calendar Tab */}
         {activeTab === 'calendar' && (
           <div className="space-y-6">
-            {/* Filtros e Controles de Salvamento - MUDANÇA 5: Filtros na mesma linha */}
+            {/* Filtros e Controles de Salvamento */}
             <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-300">
               <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900">
                 <Filter className="w-5 h-5" />
                 Filtros e Gerenciamento
               </h3>
-              {/* MUDANÇA 6: Grid em uma linha para os filtros */}
               <div className="grid grid-cols-5 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -1464,7 +1463,7 @@ const ScheduleApp = () => {
               </div>
             </div>
 
-            {/* Main Calendar - MUDANÇA 7: Sombras entre dias da semana */}
+            {/* Main Calendar */}
             <div className="bg-white rounded-lg shadow-sm p-6 max-h-[80vh] overflow-y-auto border border-gray-300">
               <div className="flex items-center justify-between mb-6">
                 <button
@@ -1516,7 +1515,6 @@ const ScheduleApp = () => {
               )}
 
               {employees.length > 0 && (
-                {/* MUDANÇA 8: Adicionando sombras entre os dias da semana */}
                 <div className="grid grid-cols-7 gap-1">
                   {weekDays.map(day => (
                     <div key={day} className="p-3 text-center font-medium text-gray-900 bg-gray-200 border border-gray-400 shadow-sm">
@@ -1848,7 +1846,7 @@ const ScheduleApp = () => {
           </div>
         )}
 
-        {/* Templates Tab - MUDANÇA 9: Adicionando sombras nos templates */}
+        {/* Templates Tab */}
         {activeTab === 'templates' && userRole !== 'employee' && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-300">
@@ -1859,7 +1857,6 @@ const ScheduleApp = () => {
                   <h4 className="font-medium mb-3 text-gray-900">Aplicar Template</h4>
                   <div className="space-y-3 border border-gray-400 rounded-lg p-4">
                     {Object.entries(templates).map(([key, template]) => (
-                      {/* MUDANÇA 10: Sombras para dividir templates */}
                       <div key={key} className="border border-gray-300 rounded-lg p-4 shadow-md bg-white">
                         <div className="flex items-center justify-between mb-2">
                           <h5 className="font-medium text-gray-900">{template.name}</h5>
@@ -1953,8 +1950,6 @@ const ScheduleApp = () => {
             </div>
           </div>
         )}
-
-        {/* Resto do código continua com as mesmas mudanças de estilo aplicadas... */}
         
         {/* People Tab */}
         {activeTab === 'people' && userRole !== 'employee' && (
